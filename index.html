@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Snake 2025 - Jogo de cobra online">
+    <title>My Snake 2025 - Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Menu Principal -->
+    <div id="menu-screen" class="screen active">
+        <div class="menu-container">
+            <div class="logo-container">
+                <h1 class="game-logo">
+                    <span class="logo-snake">🐍</span>
+                    <span class="logo-text">MY SNAKE 2025</span>
+                </h1>
+                <p class="logo-subtitle">Jogo da Cobrinha</p>
+            </div>
+
+            <div class="menu-content">
+                <!-- Área de Autenticação -->
+                <div id="user-info" class="user-info-container" style="display: none;">
+                    <!-- Foto do usuário será inserida aqui -->
+                </div>
+
+                <div class="player-setup">
+                    <label for="player-name">Nome do Jogador</label>
+                    <input type="text" id="player-name" maxlength="15" placeholder="Digite seu nome..." value="Player">
+                </div>
+
+                <div class="skin-selector">
+                    <label>Escolha sua Skin</label>
+                    <div class="skin-grid" id="skin-grid">
+                        <!-- Skins serão geradas via JavaScript -->
+                    </div>
+                </div>
+
+                <button id="play-button" class="btn-primary">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">JOGAR AGORA</span>
+                </button>
+
+                <!-- Botão de Autenticação -->
+                <button id="auth-button" class="btn-secondary">
+                    <span class="btn-icon">🔐</span>
+                    <span class="btn-text">ENTRAR COM GOOGLE</span>
+                </button>
+
+                <div class="menu-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="players-online">0</span>
+                        <span class="stat-label">Jogadores Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Jogo -->
+    <div id="game-screen" class="screen">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- HUD -->
+        <div class="hud">
+            <!-- Painel de Estatísticas -->
+            <div class="hud-panel stats-panel">
+                <div class="player-info">
+                    <div class="player-name" id="hud-player-name">Player</div>
+                    <div class="player-stats">
+                        <div class="stat">
+                            <span class="stat-icon">📏</span>
+                            <span class="stat-text">Comprimento: <strong id="hud-length">10</strong></span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⭐</span>
+                            <span class="stat-text">Pontos: <strong id="hud-score">0</strong></span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">💀</span>
+                            <span class="stat-text">Kills: <strong id="hud-kills">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="hud-panel leaderboard-panel">
+                <h3 class="panel-title">🏆 TOP 10</h3>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Indicador de Boost -->
+            <div class="hud-panel boost-panel">
+                <div class="boost-info">
+                    <span class="boost-label">BOOST</span>
+                    <span class="boost-hint">[ESPAÇO ou CLIQUE]</span>
+                </div>
+                <div class="boost-bar-container">
+                    <div class="boost-bar" id="boost-bar"></div>
+                </div>
+                <div class="boost-segments">
+                    Segmentos: <strong id="boost-segments">10</strong>
+                </div>
+            </div>
+
+            <!-- Minimapa -->
+            <div class="hud-panel minimap-panel">
+                <canvas id="minimap-canvas" width="150" height="150"></canvas>
+            </div>
+        </div>
+
+        <!-- Controles Mobile -->
+        <div class="mobile-controls" id="mobile-controls">
+            <div class="joystick-container" id="joystick-container">
+                <div class="joystick-base">
+                    <div class="joystick-stick" id="joystick-stick"></div>
+                </div>
+            </div>
+            <button class="boost-button" id="mobile-boost">
+                <span>⚡</span>
+                BOOST
+            </button>
+        </div>
+    </div>
+
+    <!-- Tela de Game Over -->
+    <div id="gameover-screen" class="screen">
+        <div class="gameover-container">
+            <h2 class="gameover-title">VOCÊ MORREU!</h2>
+
+            <div class="gameover-stats">
+                <div class="final-stat">
+                    <span class="final-stat-label">Pontuação Final</span>
+                    <span class="final-stat-value" id="final-score">0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-label">Posição Final</span>
+                    <span class="final-stat-value" id="final-position">#0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-label">Comprimento Máximo</span>
+                    <span class="final-stat-value" id="final-length">0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-label">Kills</span>
+                    <span class="final-stat-value" id="final-kills">0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-label">Tempo de Jogo</span>
+                    <span class="final-stat-value" id="final-time">0:00</span>
+                </div>
+            </div>
+
+            <div class="gameover-buttons">
+                <button id="play-again-button" class="btn-primary">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">JOGAR NOVAMENTE</span>
+                </button>
+                <button id="menu-button" class="btn-secondary">
+                    <span class="btn-text">MENU PRINCIPAL</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config e Auth System -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/AuthSystem.js"></script>
+
+    <!-- Scripts do Jogo -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/entities/Food.js"></script>
+    <script src="js/entities/Snake.js"></script>
+    <script src="js/entities/Particle.js"></script>
+    <script src="js/systems/Camera.js"></script>
+    <script src="js/systems/InputManager.js"></script>
+    <script src="js/systems/Renderer.js"></script>
+    <script src="js/systems/CollisionSystem.js"></script>
+    <script src="js/Game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+# Node modules
+node_modules/
+server/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Firebase (credenciais sensíveis)
+# IMPORTANTE: Não compartilhe suas credenciais!
+# Descomente a linha abaixo se quiser proteger suas credenciais
+# js/firebase-config.js
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build
+dist/
+build/
+
+# Temporários
+*.tmp
+*.temp
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Cache
+.cache/
