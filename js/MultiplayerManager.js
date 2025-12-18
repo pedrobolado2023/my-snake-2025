@@ -108,12 +108,14 @@ class MultiplayerManager {
     }
 
     startPositionUpdates() {
-        // Enviar posição a cada 50ms
+        // OTIMIZAÇÃO ⚡: Reduzir frequência no mobile
+        const updateRate = Utils.isTouchDevice() ? 200 : 100; // 200ms mobile, 100ms desktop
+
         this.updateInterval = setInterval(() => {
             if (this.isConnected && this.game.player && !this.game.player.isDead) {
                 this.sendPosition();
             }
-        }, 50);
+        }, updateRate);
     }
 
     sendPosition() {
@@ -129,16 +131,30 @@ class MultiplayerManager {
     }
 
     updateGameState(state) {
-        // Atualizar jogadores remotos
-        state.players.forEach(player => {
+        // OTIMIZAÇÃO ⚡: Limitar atualizações no mobile
+        if (Utils.isTouchDevice() && Math.random() > 0.3) {
+            return; // Atualizar apenas 30% das vezes no mobile
+        }
+
+        // Atualizar jogadores remotos (limitado)
+        const maxPlayers = Utils.isTouchDevice() ? 5 : 20;
+        const playersToUpdate = state.players.slice(0, maxPlayers);
+
+        playersToUpdate.forEach(player => {
             if (player.id !== this.socket.id) {
                 this.remotePlayers.set(player.id, player);
             }
         });
 
-        // Atualizar bots (substituir bots locais pelos do servidor)
+        // Atualizar bots (com otimização)
         if (this.game && state.bots) {
             this.game.updateServerBots(state.bots);
+        }
+
+        // Limpar jogadores antigos (evitar vazamento de memória)
+        if (this.remotePlayers.size > maxPlayers) {
+            const toDelete = Array.from(this.remotePlayers.keys()).slice(maxPlayers);
+            toDelete.forEach(id => this.remotePlayers.delete(id));
         }
     }
 

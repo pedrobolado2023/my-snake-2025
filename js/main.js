@@ -93,7 +93,9 @@ function startGame() {
     if (!game) {
         game = new Game();
 
-        // Inicializar multiplayer (se disponível)
+        // ❌ MULTIPLAYER DESABILITADO (causando erros e lag)
+        // Será reativado após correções no servidor
+        /*
         if (typeof MultiplayerManager !== 'undefined') {
             multiplayerManager = new MultiplayerManager(game);
             const connected = multiplayerManager.connect();
@@ -106,6 +108,8 @@ function startGame() {
         } else {
             console.log('🎮 Modo single-player');
         }
+        */
+        console.log('🎮 Modo single-player (multiplayer desabilitado)');
     }
 
     // Inicializar jogo

@@ -255,6 +255,46 @@ class Game {
         return nearest;
     }
 
+    // Atualizar bots do servidor (multiplayer) - OTIMIZADO ⚡
+    updateServerBots(serverBots) {
+        if (!serverBots || !Array.isArray(serverBots)) return;
+
+        // OTIMIZAÇÃO: Limitar atualização no mobile
+        if (Utils.isTouchDevice() && Math.random() > 0.5) {
+            return; // Atualizar apenas 50% das vezes no mobile
+        }
+
+        // Não substituir bots locais se não houver jogadores no servidor
+        // Isso evita consumo desnecessário de memória
+        if (serverBots.length === 0) return;
+
+        // Atualizar apenas se houver mudanças significativas
+        const currentBotCount = this.snakes.filter(s => s.isBot).length;
+        if (Math.abs(currentBotCount - serverBots.length) < 2) {
+            return; // Diferença pequena, não atualizar
+        }
+
+        // Remover bots locais antigos
+        this.snakes = this.snakes.filter(snake => !snake.isBot || snake.id === this.player?.id);
+
+        // Adicionar bots do servidor (limitado)
+        const maxBots = Utils.isTouchDevice() ? 3 : 10; // Limitar bots no mobile
+        const botsToAdd = serverBots.slice(0, maxBots);
+
+        botsToAdd.forEach(botData => {
+            const bot = new Snake(
+                botData.x || 0,
+                botData.y || 0,
+                botData.name || 'Bot',
+                CONFIG.SKINS[Math.floor(Math.random() * CONFIG.SKINS.length)]
+            );
+            bot.id = botData.id;
+            bot.isBot = true;
+            bot.length = botData.length || 10;
+            this.snakes.push(bot);
+        });
+    }
+
     checkCollisions() {
         // Construir spatial grid
         this.collisionSystem.buildSpatialGrid(this.snakes);
