@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Conexão - Multiplayer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0a0e27;
+            color: #00ffcc;
+        }
+
+        .status {
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: rgba(26, 31, 58, 0.8);
+        }
+
+        .success {
+            border-left: 5px solid #00ffcc;
+        }
+
+        .error {
+            border-left: 5px solid #ff3366;
+        }
+
+        .info {
+            border-left: 5px solid #00b4d8;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            background: #00ffcc;
+            color: #0a0e27;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00b4d8;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Teste de Conexão Multiplayer</h1>
+
+    <div class="status info">
+        <h3>Status da Conexão</h3>
+        <p id="connection-status">⏳ Aguardando teste...</p>
+    </div>
+
+    <div class="status info">
+        <h3>Servidor</h3>
+        <p><strong>URL:</strong> <span id="server-url">https://snake-server.q-aura.com.br</span></p>
+        <p><strong>Socket.io:</strong> <span id="socketio-status">❓ Verificando...</span></p>
+    </div>
+
+    <div>
+        <button onclick="testConnection()">🔌 Testar Conexão</button>
+        <button onclick="testHealthCheck()">❤️ Health Check</button>
+        <button onclick="testStats()">📊 Ver Stats</button>
+        <button onclick="clearLogs()">🗑️ Limpar Logs</button>
+    </div>
+
+    <div class="status info">
+        <h3>Logs</h3>
+        <pre id="logs"></pre>
+    </div>
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+
+    <script>
+        const SERVER_URL = 'https://snake-server.q-aura.com.br';
+        let socket = null;
+
+        function log(message, type = 'info') {
+            const logsElement = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            logsElement.textContent += `[${timestamp}] ${icon} ${message}\n`;
+            logsElement.scrollTop = logsElement.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').textContent = '';
+        }
+
+        // Verificar se Socket.io está carregado
+        window.addEventListener('load', () => {
+            if (typeof io !== 'undefined') {
+                document.getElementById('socketio-status').textContent = '✅ Carregado';
+                log('Socket.io carregado com sucesso', 'success');
+            } else {
+                document.getElementById('socketio-status').textContent = '❌ Não carregado';
+                log('Socket.io NÃO está carregado!', 'error');
+            }
+        });
+
+        async function testHealthCheck() {
+            log('Testando health check...');
+            try {
+                const response = await fetch(`${SERVER_URL}/health`);
+                const data = await response.json();
+                log(`Health Check: ${JSON.stringify(data, null, 2)}`, 'success');
+                document.getElementById('connection-status').textContent = '✅ Servidor está online!';
+            } catch (error) {
+                log(`Erro no health check: ${error.message}`, 'error');
+                document.getElementById('connection-status').textContent = '❌ Servidor offline ou inacessível';
+            }
+        }
+
+        async function testStats() {
+            log('Buscando estatísticas...');
+            try {
+                const response = await fetch(`${SERVER_URL}/stats`);
+                const data = await response.json();
+                log(`Stats: ${JSON.stringify(data, null, 2)}`, 'success');
+            } catch (error) {
+                log(`Erro ao buscar stats: ${error.message}`, 'error');
+            }
+        }
+
+        function testConnection() {
+            if (typeof io === 'undefined') {
+                log('Socket.io não está carregado!', 'error');
+                return;
+            }
+
+            log('Iniciando conexão com o servidor...');
+            document.getElementById('connection-status').textContent = '⏳ Conectando...';
+
+            try {
+                socket = io(SERVER_URL, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionDelay: 1000,
+                    reconnectionAttempts: 5
+                });
+
+                socket.on('connect', () => {
+                    log(`Conectado! Socket ID: ${socket.id}`, 'success');
+                    document.getElementById('connection-status').textContent = `✅ Conectado! ID: ${socket.id}`;
+
+                    // Tentar entrar em uma sala
+                    log('Tentando entrar na sala "global"...');
+                    socket.emit('joinRoom', {
+                        roomId: 'global',
+                        player: {
+                            name: 'Teste Player',
+                            x: 0,
+                            y: 0,
+                            angle: 0,
+                            length: 10
+                        }
+                    });
+                });
+
+                socket.on('disconnect', () => {
+                    log('Desconectado do servidor', 'error');
+                    document.getElementById('connection-status').textContent = '❌ Desconectado';
+                });
+
+                socket.on('gameState', (state) => {
+                    log(`Estado do jogo recebido: ${state.players.length} jogadores, ${state.bots.length} bots`, 'success');
+                });
+
+                socket.on('playerJoined', (data) => {
+                    log(`Jogador entrou: ${data.name}`, 'success');
+                });
+
+                socket.on('playerLeft', (data) => {
+                    log(`Jogador saiu: ${data.id}`, 'info');
+                });
+
+                socket.on('error', (error) => {
+                    log(`Erro no socket: ${error}`, 'error');
+                });
+
+                socket.on('connect_error', (error) => {
+                    log(`Erro de conexão: ${error.message}`, 'error');
+                    document.getElementById('connection-status').textContent = '❌ Erro de conexão';
+                });
+
+            } catch (error) {
+                log(`Erro ao criar socket: ${error.message}`, 'error');
+                document.getElementById('connection-status').textContent = '❌ Erro ao conectar';
+            }
+        }
+
+        // Teste automático ao carregar
+        setTimeout(() => {
+            testHealthCheck();
+        }, 1000);
+    </script>
+</body>
+
+</html>

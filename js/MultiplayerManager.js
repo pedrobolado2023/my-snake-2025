@@ -83,14 +83,17 @@ class MultiplayerManager {
     }
 
     joinRoom() {
-        if (!this.socket || !this.isConnected) return;
+        if (!this.socket || !this.isConnected) {
+            console.log('⚠️ Socket não conectado, aguardando...');
+            return;
+        }
 
         const playerData = {
-            name: this.game.playerName,
-            x: this.game.player.x,
-            y: this.game.player.y,
-            angle: this.game.player.angle,
-            length: this.game.player.length
+            name: this.game.playerName || 'Player',
+            x: this.game.player ? this.game.player.x : 0,
+            y: this.game.player ? this.game.player.y : 0,
+            angle: this.game.player ? this.game.player.angle : 0,
+            length: this.game.player ? this.game.player.length : 10
         };
 
         this.socket.emit('joinRoom', {
@@ -98,7 +101,7 @@ class MultiplayerManager {
             player: playerData
         });
 
-        console.log(`🎮 Entrando na sala: ${this.roomId}`);
+        console.log(`🎮 Entrando na sala: ${this.roomId} como ${playerData.name}`);
 
         // Iniciar envio de posição
         this.startPositionUpdates();
