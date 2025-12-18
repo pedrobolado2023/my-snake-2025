@@ -1,6 +1,7 @@
 // Arquivo principal - Inicialização do jogo
 let game = null;
 let selectedSkinId = CONFIG.SKINS[0].id;
+let multiplayerManager = null; // Gerenciador de multiplayer
 
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
@@ -91,6 +92,20 @@ function startGame() {
     // Criar ou reiniciar o jogo
     if (!game) {
         game = new Game();
+
+        // Inicializar multiplayer (se disponível)
+        if (typeof MultiplayerManager !== 'undefined') {
+            multiplayerManager = new MultiplayerManager(game);
+            const connected = multiplayerManager.connect();
+
+            if (connected) {
+                console.log('🌐 Modo multiplayer ativado!');
+            } else {
+                console.log('🎮 Modo single-player (multiplayer não disponível)');
+            }
+        } else {
+            console.log('🎮 Modo single-player');
+        }
     }
 
     // Inicializar jogo
