@@ -5,7 +5,7 @@ class MultiplayerManager {
         this.socket = null;
         this.isConnected = false;
         this.roomId = 'global';
-        this.serverUrl = 'https://snake-server-j-aura.com.br'; // URL do servidor no Easypanel
+        this.serverUrl = 'https://snake-server.q-aura.com.br'; // URL correta do servidor
         this.remotePlayers = new Map();
         this.updateInterval = null;
     }
