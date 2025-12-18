@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     /* Cores Neon */
     --bg-dark: #0a0e27;
     --bg-medium: #1a1f3a;
@@ -37,7 +37,7 @@ body {
     height: 100vh;
 }
 
-/* Animações */
+/* AnimaÃ§Ãµes */
 @keyframes pulse {
 
     0%,
@@ -265,7 +265,7 @@ body {
     transform: scale(1.15);
 }
 
-/* Botões */
+/* BotÃµes */
 .btn-primary,
 .btn-secondary {
     width: 100%;
@@ -380,7 +380,7 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Painel de Estatísticas */
+/* Painel de EstatÃ­sticas */
 .stats-panel {
     position: absolute;
     top: 1rem;
@@ -789,7 +789,7 @@ body {
 }
 
 
-/* Autentica��o - Foto do Usu�rio */
+/* Autenticação - Foto do Usuário */
 .user-info-container {
     text-align: center;
     margin-bottom: 1rem;
@@ -808,7 +808,7 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Correções Mobile - Grid de Skins */
+/* CorreÃ§Ãµes Mobile - Grid de Skins */
 .skin-grid {
     max-height: 180px;
     overflow-y: auto;
@@ -857,5 +857,116 @@ body {
     
     .skin-option {
         min-height: 50px;
+    }
+}
+
+
+/* ========================================
+   OTIMIZAÃ‡Ã•ES MOBILE ULTRA âš¡
+   Adicione este CSS no final do styles.css
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    /* ===== REDUZIR TAMANHOS HUD ===== */
+    .game-hud {
+        font-size: 9px !important;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    .game-hud>div {
+        padding: 4px 8px !important;
+        margin: 4px !important;
+    }
+
+    .game-hud h3 {
+        font-size: 11px !important;
+        margin-bottom: 3px !important;
+    }
+
+    .game-hud p,
+    .game-hud span {
+        font-size: 9px !important;
+        margin: 1px 0 !important;
+        line-height: 1.2 !important;
+    }
+
+    /* ===== REDUZIR LEADERBOARD ===== */
+    #leaderboard {
+        max-height: 140px !important;
+        transform: scale(0.85);
+        transform-origin: top right;
+    }
+
+    #leaderboard h3 {
+        font-size: 11px !important;
+        padding: 5px !important;
+    }
+
+    .leaderboard-item {
+        padding: 3px 6px !important;
+        font-size: 9px !important;
+        min-height: auto !important;
+    }
+
+    .leaderboard-rank {
+        font-size: 10px !important;
+        min-width: 18px !important;
+        padding: 2px 4px !important;
+    }
+
+    .leaderboard-name {
+        font-size: 9px !important;
+    }
+
+    .leaderboard-score {
+        font-size: 9px !important;
+    }
+
+    /* ===== ESCONDER BARRA DE BOOST ===== */
+    #boost-bar-container,
+    .boost-bar,
+    [class*="boost"] {
+        display: none !important;
+    }
+
+    /* ===== MINIMAPA MENOR ===== */
+    #minimap-canvas {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    /* ===== CONTROLES MOBILE MAIORES ===== */
+    #mobile-controls {
+        bottom: 10px !important;
+    }
+
+    #joystick-container {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    #boost-button {
+        width: 100px !important;
+        height: 100px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* ===== MOBILE PEQUENO (< 480px) ===== */
+@media (max-width: 480px) {
+    .game-hud {
+        transform: scale(0.7);
+    }
+
+    #leaderboard {
+        transform: scale(0.75);
+        max-height: 120px !important;
+    }
+
+    #minimap-canvas {
+        width: 60px !important;
+        height: 60px !important;
     }
 }
