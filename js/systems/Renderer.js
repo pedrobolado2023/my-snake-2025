@@ -106,12 +106,8 @@ class Renderer {
         // Borda externa (perigo)
         this.ctx.strokeStyle = CONFIG.COLORS.BORDER;
         this.ctx.lineWidth = CONFIG.ARENA_BORDER_WIDTH * camera.zoom;
-
-        // OTIMIZAÇÃO ⚡: Desabilitar sombras no mobile
-        if (!Utils.isTouchDevice()) {
-            this.ctx.shadowBlur = 20 * camera.zoom;
-            this.ctx.shadowColor = CONFIG.COLORS.BORDER;
-        }
+        this.ctx.shadowBlur = 20 * camera.zoom;
+        this.ctx.shadowColor = CONFIG.COLORS.BORDER;
 
         this.ctx.beginPath();
         this.ctx.arc(screenCenter.x, screenCenter.y, screenRadius, 0, Math.PI * 2);
@@ -147,12 +143,8 @@ class Renderer {
         // Borda externa
         this.ctx.strokeStyle = CONFIG.COLORS.BORDER;
         this.ctx.lineWidth = CONFIG.ARENA_BORDER_WIDTH * camera.zoom;
-
-        // OTIMIZAÇÃO ⚡: Desabilitar sombras no mobile
-        if (!Utils.isTouchDevice()) {
-            this.ctx.shadowBlur = 20 * camera.zoom;
-            this.ctx.shadowColor = CONFIG.COLORS.BORDER;
-        }
+        this.ctx.shadowBlur = 20 * camera.zoom;
+        this.ctx.shadowColor = CONFIG.COLORS.BORDER;
 
         this.ctx.strokeRect(topLeft.x, topLeft.y, width, height);
 

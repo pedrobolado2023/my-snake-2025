@@ -1,4 +1,4 @@
-﻿// ConfiguraÃ§Ãµes do Jogo
+// Configurações do Jogo
 const CONFIG = {
     // Arena
     ARENA_SIZE: 5000,
@@ -9,11 +9,11 @@ const CONFIG = {
     SNAKE_INITIAL_LENGTH: 10,
     SNAKE_SEGMENT_SIZE: 7, // Reduzido de 10 para 7 (mais fino)
     SNAKE_SEGMENT_SPACING: 6, // Reduzido de 8 para 6
-    SNAKE_BASE_SPEED: 200, // Aumentado de 180 para 200 (mais rÃ¡pido)
+    SNAKE_BASE_SPEED: 200, // Aumentado de 180 para 200 (mais rápido)
     SNAKE_BOOST_MULTIPLIER: 2,
     SNAKE_BOOST_COST_PER_SECOND: 0.5,
     SNAKE_MIN_LENGTH_TO_BOOST: 15,
-    SNAKE_TURN_SPEED: 0.1, // Aumentado de 0.08 para 0.1 (mais Ã¡gil)
+    SNAKE_TURN_SPEED: 0.1, // Aumentado de 0.08 para 0.1 (mais ágil)
 
     // Food
     FOOD_SIZE: 6, // Reduzido de 8 para 6
@@ -28,39 +28,37 @@ const CONFIG = {
     FOOD_GIANT_SPAWN_INTERVAL: 60000, // Aumentado de 30s para 60s (mais rara)
     FOOD_GIANT_COLOR: '#FFD700',
 
-    // PartÃ­culas (OTIMIZADAS âš¡ para melhor performance)
-    PARTICLE_LIFETIME: 600, // Reduzido de 800ms para 600ms
-    PARTICLE_COUNT_ON_DEATH: 8, // Reduzido de 10 para 8
-    PARTICLE_COUNT_ON_EAT: 1, // Reduzido de 2 para 1
-    MAX_PARTICLES: 150, // Limite mÃ¡ximo de partÃ­culas ativas
+    // Partículas (reduzidas para melhor performance)
+    PARTICLE_LIFETIME: 800, // Reduzido de 1000ms
+    PARTICLE_COUNT_ON_DEATH: 10, // Reduzido de 20
+    PARTICLE_COUNT_ON_EAT: 2, // Reduzido de 5
 
-    // Mobile - OtimizaÃ§Ãµes automÃ¡ticas ULTRA âš¡
+    // Mobile - Otimizações automáticas
     MOBILE_OPTIMIZATIONS: {
-        REDUCE_BOTS: true,
-        REDUCE_PARTICLES: true,
-        REDUCE_FOOD: true,
-        BOTS_COUNT: 1, // ⚡ Apenas 1 bot no mobile // Reduzido de 3 para 2 bots no mobile
-        FOOD_MIN_COUNT: 25, // ⚡ Reduzido para 25 // Reduzido de 50 para 40
-        PARTICLE_COUNT_ON_DEATH: 3, // Reduzido de 5 para 3
-        PARTICLE_COUNT_ON_EAT: 0, // Sem partÃ­culas ao comer no mobile
-        MAX_PARTICLES: 50, // Limite muito menor no mobile
+        REDUCE_BOTS: true, // Reduzir bots no mobile
+        REDUCE_PARTICLES: true, // Menos partículas
+        REDUCE_FOOD: true, // Menos comida
+        BOTS_COUNT: 3, // Apenas 3 bots no mobile (ao invés de 5)
+        FOOD_MIN_COUNT: 50, // Menos comida no mobile
+        PARTICLE_COUNT_ON_DEATH: 5, // Metade das partículas
+        PARTICLE_COUNT_ON_EAT: 1, // Apenas 1 partícula
     },
 
-    // CÃ¢mera
+    // Câmera
     CAMERA_LERP_FACTOR: 0.1,
     ZOOM_MIN: 0.5,
     ZOOM_MAX: 1.2,
     ZOOM_FACTOR: 0.0003,
 
-    // RenderizaÃ§Ã£o - TEMA DE NATAL ðŸŽ…â„ï¸
+    // Renderização - TEMA DE NATAL 🎅❄️
     GRID_SIZE: 50,
     GRID_COLOR: 'rgba(255, 255, 255, 0.1)', // Grid branco suave (neve)
-    BACKGROUND_COLOR: '#1a2332', // Azul escuro noturno (cÃ©u de Natal)
+    BACKGROUND_COLOR: '#1a2332', // Azul escuro noturno (céu de Natal)
 
     // Tema de Natal
     CHRISTMAS_THEME: {
         ENABLED: true,
-        SNOW_ENABLED: false, // ❌ Desabilitado para melhor performance no mobile
+        SNOW_ENABLED: true,
         SANTA_ENABLED: true,
     },
 
@@ -76,7 +74,7 @@ const CONFIG = {
         BORDER: '#DC143C', // Vermelho Natal para a borda
     },
 
-    // Skins disponÃ­veis
+    // Skins disponíveis
     SKINS: [
         { id: 'cyan', name: 'Cyan', colors: ['#00ffcc', '#00b4d8'] },
         { id: 'purple', name: 'Purple', colors: ['#9d4edd', '#c77dff'] },
@@ -109,5 +107,3 @@ const CONFIG = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CONFIG;
 }
-
-
