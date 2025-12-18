@@ -329,6 +329,17 @@ class Game {
 
         // Remover partículas mortas
         this.particles = this.particles.filter(particle => !particle.isDead());
+
+        // OTIMIZAÇÃO ⚡: Limitar número máximo de partículas
+        const isMobile = Utils.isTouchDevice();
+        const maxParticles = isMobile && CONFIG.MOBILE_OPTIMIZATIONS.REDUCE_PARTICLES
+            ? CONFIG.MOBILE_OPTIMIZATIONS.MAX_PARTICLES
+            : CONFIG.MAX_PARTICLES;
+
+        // Remover partículas mais antigas se exceder o limite
+        if (this.particles.length > maxParticles) {
+            this.particles = this.particles.slice(-maxParticles);
+        }
     }
 
     manageFood() {

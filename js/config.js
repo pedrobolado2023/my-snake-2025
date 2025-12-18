@@ -28,20 +28,22 @@ const CONFIG = {
     FOOD_GIANT_SPAWN_INTERVAL: 60000, // Aumentado de 30s para 60s (mais rara)
     FOOD_GIANT_COLOR: '#FFD700',
 
-    // Partículas (reduzidas para melhor performance)
-    PARTICLE_LIFETIME: 800, // Reduzido de 1000ms
-    PARTICLE_COUNT_ON_DEATH: 10, // Reduzido de 20
-    PARTICLE_COUNT_ON_EAT: 2, // Reduzido de 5
+    // Partículas (OTIMIZADAS ⚡ para melhor performance)
+    PARTICLE_LIFETIME: 600, // Reduzido de 800ms para 600ms
+    PARTICLE_COUNT_ON_DEATH: 8, // Reduzido de 10 para 8
+    PARTICLE_COUNT_ON_EAT: 1, // Reduzido de 2 para 1
+    MAX_PARTICLES: 150, // Limite máximo de partículas ativas
 
-    // Mobile - Otimizações automáticas
+    // Mobile - Otimizações automáticas ULTRA ⚡
     MOBILE_OPTIMIZATIONS: {
-        REDUCE_BOTS: true, // Reduzir bots no mobile
-        REDUCE_PARTICLES: true, // Menos partículas
-        REDUCE_FOOD: true, // Menos comida
-        BOTS_COUNT: 3, // Apenas 3 bots no mobile (ao invés de 5)
-        FOOD_MIN_COUNT: 50, // Menos comida no mobile
-        PARTICLE_COUNT_ON_DEATH: 5, // Metade das partículas
-        PARTICLE_COUNT_ON_EAT: 1, // Apenas 1 partícula
+        REDUCE_BOTS: true,
+        REDUCE_PARTICLES: true,
+        REDUCE_FOOD: true,
+        BOTS_COUNT: 2, // Reduzido de 3 para 2 bots no mobile
+        FOOD_MIN_COUNT: 40, // Reduzido de 50 para 40
+        PARTICLE_COUNT_ON_DEATH: 3, // Reduzido de 5 para 3
+        PARTICLE_COUNT_ON_EAT: 0, // Sem partículas ao comer no mobile
+        MAX_PARTICLES: 50, // Limite muito menor no mobile
     },
 
     // Câmera

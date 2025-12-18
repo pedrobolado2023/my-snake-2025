@@ -1,8 +1,9 @@
-// Sistema de Neve para Tema de Natal
+// Sistema de Neve para Tema de Natal - OTIMIZADO ⚡
 class SnowSystem {
     constructor() {
         this.snowflakes = [];
-        this.maxSnowflakes = 100; // Quantidade de flocos de neve
+        // Reduzido de 100 para 30 (70% menos) para melhor performance
+        this.maxSnowflakes = Utils.isTouchDevice() ? 20 : 30;
         this.enabled = true;
 
         // Criar flocos iniciais
@@ -29,12 +30,15 @@ class SnowSystem {
     update(deltaTime) {
         if (!this.enabled) return;
 
+        // Limitar deltaTime para evitar saltos grandes
+        const dt = Math.min(deltaTime, 50);
+
         this.snowflakes.forEach(flake => {
             // Mover para baixo
-            flake.y += flake.speed * deltaTime * 0.1;
+            flake.y += flake.speed * dt * 0.1;
 
             // Movimento horizontal (drift)
-            flake.x += flake.drift * deltaTime * 0.1;
+            flake.x += flake.drift * dt * 0.1;
 
             // Resetar quando sair da tela
             const maxPos = CONFIG.ARENA_SIZE / 2;
@@ -54,7 +58,23 @@ class SnowSystem {
 
         ctx.save();
 
+        // Otimização: calcular bounds visíveis uma vez
+        const bounds = camera.getVisibleBounds();
+        const margin = 50;
+
+        let rendered = 0;
+        const maxRender = Utils.isTouchDevice() ? 15 : 30;
+
         this.snowflakes.forEach(flake => {
+            // Otimização: renderizar apenas flocos visíveis
+            if (flake.x < bounds.left - margin || flake.x > bounds.right + margin ||
+                flake.y < bounds.top - margin || flake.y > bounds.bottom + margin) {
+                return;
+            }
+
+            // Limitar quantidade renderizada no mobile
+            if (rendered >= maxRender) return;
+            rendered++;
             // Converter para coordenadas da tela
             const screenX = (flake.x - camera.x) * camera.zoom + ctx.canvas.width / 2;
             const screenY = (flake.y - camera.y) * camera.zoom + ctx.canvas.height / 2;
