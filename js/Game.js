@@ -17,6 +17,10 @@ class Game {
         this.food = [];
         this.particles = [];
 
+        // Tema de Natal 🎅❄️
+        this.snowSystem = new SnowSystem();
+        this.santaClaus = new SantaClaus();
+
         // Estado do jogo
         this.isRunning = false;
         this.isPaused = false;
@@ -166,6 +170,12 @@ class Game {
     }
 
     update(deltaTime) {
+        // Atualizar tema de Natal 🎅❄️
+        if (CONFIG.CHRISTMAS_THEME.ENABLED) {
+            if (this.snowSystem) this.snowSystem.update(deltaTime);
+            if (this.santaClaus) this.santaClaus.update(deltaTime);
+        }
+
         // Atualizar input do jogador
         if (this.player && !this.player.isDead) {
             const targetAngle = this.inputManager.getTargetAngle(this.player.x, this.player.y);
@@ -381,8 +391,8 @@ class Game {
     }
 
     render() {
-        // Renderizar background
-        this.renderer.renderBackground(this.camera);
+        // Renderizar background com neve e Papai Noel 🎅❄️
+        this.renderer.renderBackground(this.camera, this.snowSystem, this.santaClaus);
 
         // Renderizar comida
         this.renderer.renderFood(this.food, this.camera);

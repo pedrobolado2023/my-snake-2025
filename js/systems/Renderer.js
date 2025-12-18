@@ -25,7 +25,7 @@ class Renderer {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    renderBackground(camera) {
+    renderBackground(camera, snowSystem = null, santaClaus = null) {
         // Limpar tela
         this.clear();
 
@@ -34,6 +34,16 @@ class Renderer {
 
         // Renderizar bordas da arena
         this.renderArenaBorder(camera);
+
+        // Renderizar Papai Noel (atrás de tudo) 🎅
+        if (santaClaus && CONFIG.CHRISTMAS_THEME.SANTA_ENABLED) {
+            santaClaus.render(this.ctx, camera);
+        }
+
+        // Renderizar neve (na frente do fundo, atrás das cobras) ❄️
+        if (snowSystem && CONFIG.CHRISTMAS_THEME.SNOW_ENABLED) {
+            snowSystem.render(this.ctx, camera);
+        }
     }
 
     renderGrid(camera) {

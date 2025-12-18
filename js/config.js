@@ -50,12 +50,19 @@ const CONFIG = {
     ZOOM_MAX: 1.2,
     ZOOM_FACTOR: 0.0003,
 
-    // Renderização
+    // Renderização - TEMA DE NATAL 🎅❄️
     GRID_SIZE: 50,
-    GRID_COLOR: 'rgba(26, 31, 58, 0.3)',
-    BACKGROUND_COLOR: '#0a0e27',
+    GRID_COLOR: 'rgba(255, 255, 255, 0.1)', // Grid branco suave (neve)
+    BACKGROUND_COLOR: '#1a2332', // Azul escuro noturno (céu de Natal)
 
-    // Cores Neon
+    // Tema de Natal
+    CHRISTMAS_THEME: {
+        ENABLED: true,
+        SNOW_ENABLED: true,
+        SANTA_ENABLED: true,
+    },
+
+    // Cores Neon (mantidas para as cobras)
     COLORS: {
         NEON_PINK: '#ff3366',
         NEON_CYAN: '#00ffcc',
@@ -64,7 +71,7 @@ const CONFIG = {
         NEON_GREEN: '#06ffa5',
         NEON_YELLOW: '#ffea00',
         NEON_ORANGE: '#ff6b35',
-        BORDER: '#ff3366',
+        BORDER: '#DC143C', // Vermelho Natal para a borda
     },
 
     // Skins disponíveis
