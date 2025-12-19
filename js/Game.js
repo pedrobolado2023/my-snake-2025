@@ -358,7 +358,14 @@ class Game {
     }
 
     updateFood(deltaTime) {
-        this.food.forEach(food => food.update(deltaTime));
+        this.food.forEach(food => {
+            food.update(deltaTime);
+
+            // Atração magnética em direção ao jogador
+            if (this.player && !this.player.isDead) {
+                food.attractTowards(this.player.x, this.player.y, deltaTime);
+            }
+        });
 
         // Remover comida expirada
         this.food = this.food.filter(food => !food.isExpired());

@@ -9,6 +9,10 @@ class SkinSelectionManager {
 
     // Carregar skins desbloqueadas do localStorage
     loadUnlockedSkins() {
+        // TODAS AS SKINS DESBLOQUEADAS POR PADRÃO
+        return CONFIG.SKINS.map(skin => skin.id);
+
+        /* Código original comentado - sistema de desbloqueio por conquistas
         const saved = localStorage.getItem('unlockedSkins');
         if (saved) {
             return JSON.parse(saved);
@@ -17,6 +21,7 @@ class SkinSelectionManager {
         return CONFIG.SKINS
             .filter(skin => skin.unlocked)
             .map(skin => skin.id);
+        */
     }
 
     // Salvar skins desbloqueadas

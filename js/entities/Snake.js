@@ -172,7 +172,14 @@ class Snake {
 
             // Calcular tamanho do segmento (maior na cabeça)
             const sizeRatio = 0.7 + (i / this.segments.length) * 0.3;
-            const segmentSize = CONFIG.SNAKE_SEGMENT_SIZE * sizeRatio * camera.zoom;
+
+            // Crescimento baseado no comprimento total (mesma lógica do getHeadRadius)
+            const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
+            const growthFactor = Math.floor(this.segments.length / 10) * 1;
+            const maxGrowth = 8;
+            const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
+
+            const segmentSize = growthSize * sizeRatio * camera.zoom;
 
             // Adicionar efeito de onda
             const waveOffset = Math.sin(this.wavePhase + i * 0.3) * 2 * camera.zoom;
@@ -306,7 +313,12 @@ class Snake {
     }
 
     getHeadRadius() {
-        return CONFIG.SNAKE_SEGMENT_SIZE;
+        // Tamanho base + crescimento baseado no comprimento
+        // A cada 10 segmentos, aumenta 1 pixel no raio
+        const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
+        const growthFactor = Math.floor(this.segments.length / 10) * 1;
+        const maxGrowth = 8; // Máximo de 8 pixels adicionais
+        return baseSize + Math.min(growthFactor, maxGrowth);
     }
 
     getSegments() {

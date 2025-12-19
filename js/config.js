@@ -44,11 +44,11 @@ const CONFIG = {
         PARTICLE_COUNT_ON_EAT: 1, // Apenas 1 partícula
     },
 
-    // Câmera
+    // Câmera - Zoom aumentado para cobrinha mais próxima
     CAMERA_LERP_FACTOR: 0.1,
-    ZOOM_MIN: 0.5,
-    ZOOM_MAX: 1.2,
-    ZOOM_FACTOR: 0.0003,
+    ZOOM_MIN: 0.8, // Aumentado de 0.5 para 0.8 (mais zoom)
+    ZOOM_MAX: 1.5, // Aumentado de 1.2 para 1.5 (ainda mais zoom)
+    ZOOM_FACTOR: 0.0002, // Reduzido de 0.0003 (zoom mais gradual)
 
     // Renderização - TEMA DE NATAL 🎅❄️
     GRID_SIZE: 50,
