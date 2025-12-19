@@ -68,23 +68,20 @@ function startGame() {
     if (!game) {
         game = new Game();
 
-        // ❌ MULTIPLAYER DESABILITADO (causando erros e lag)
-        // Será reativado após correções no servidor
-        /*
+        // ✅ MULTIPLAYER ATIVADO com matchmaking inteligente
         if (typeof MultiplayerManager !== 'undefined') {
             multiplayerManager = new MultiplayerManager(game);
             const connected = multiplayerManager.connect();
 
             if (connected) {
                 console.log('🌐 Modo multiplayer ativado!');
+                console.log('🎯 Matchmaking inteligente: você será conectado com outros jogadores reais');
             } else {
                 console.log('🎮 Modo single-player (multiplayer não disponível)');
             }
         } else {
             console.log('🎮 Modo single-player');
         }
-        */
-        console.log('🎮 Modo single-player (multiplayer desabilitado)');
     }
 
     // Inicializar jogo
