@@ -1,0 +1,169 @@
+﻿/* Responsividade para tela de skins */
+@media (max-width: 768px) {
+    .skin-selection-container {
+        height: 98vh;
+        padding: 0.5rem 0;
+    }
+
+    .skin-selection-header {
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+
+    .skin-selection-title {
+        font-size: 1.5rem;
+    }
+
+    .title-icon {
+        font-size: 1.8rem;
+    }
+
+    .back-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .skin-selection-content {
+        padding: 1rem;
+    }
+
+    .category-filters {
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .category-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .skins-display-grid {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+        gap: 0.8rem;
+        padding: 0.8rem;
+        max-height: calc(100vh - 420px);
+    }
+
+    .skin-info-panel {
+        padding: 1rem;
+    }
+
+    .skin-info-panel h3 {
+        font-size: 1.4rem;
+    }
+
+    .skin-info-panel p {
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .skin-selection-container {
+        width: 100%;
+        height: 100vh;
+        padding: 0.5rem;
+    }
+
+    .skin-selection-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .back-button {
+        position: static;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .skin-selection-title {
+        font-size: 1.3rem;
+    }
+
+    .title-icon {
+        font-size: 1.5rem;
+    }
+
+    .skin-selection-content {
+        padding: 0.8rem;
+    }
+
+    .category-filters {
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
+
+    .category-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+        flex: 1 1 auto;
+        min-width: calc(33.333% - 0.3rem);
+    }
+
+    .category-count {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.75rem;
+    }
+
+    .skins-display-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 0.6rem;
+        padding: 0.6rem;
+        max-height: calc(100vh - 400px);
+        min-height: 150px;
+    }
+
+    .skin-card-name {
+        font-size: 0.7rem;
+        padding: 0.3rem;
+    }
+
+    .skin-card.locked::before {
+        font-size: 2rem;
+    }
+
+    .skin-info-panel {
+        padding: 0.8rem;
+    }
+
+    .skin-info-panel h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .skin-info-panel p {
+        font-size: 0.85rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    .progress-bar {
+        height: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .skin-selection-title {
+        font-size: 1.1rem;
+    }
+
+    .skins-display-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 0.5rem;
+        max-height: calc(100vh - 380px);
+    }
+
+    .category-btn {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .skin-card-name {
+        font-size: 0.65rem;
+    }
+}
