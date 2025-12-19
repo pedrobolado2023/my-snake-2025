@@ -6,6 +6,7 @@ Servidor Node.js + Socket.io para o jogo My Snake 2025.
 
 - ✅ **Multiplayer em tempo real** via WebSocket
 - ✅ **Sistema de salas** (até 50 jogadores por sala)
+- ✅ **Matchmaking inteligente** (prioriza encher salas com jogadores reais)
 - ✅ **Bots automáticos** (preenchem vagas vazias)
 - ✅ **Sincronização** a cada 50ms
 - ✅ **Sistema de entrada/saída** (jogador entra → remove bot, jogador sai → adiciona bot)
@@ -58,12 +59,14 @@ GET /stats
 Resposta:
 ```json
 {
+  "totalRooms": 1,
   "rooms": [
     {
-      "id": "global",
+      "id": "room-1734634567890",
       "players": 5,
       "bots": 45,
-      "total": 50
+      "total": 50,
+      "playerNames": ["João", "Maria", "Pedro", "Ana", "Lucas"]
     }
   ]
 }
@@ -88,6 +91,36 @@ Resposta:
 | `playerJoined` | `{ id, name }` | Jogador entrou |
 | `playerLeft` | `{ id }` | Jogador saiu |
 | `playerDied` | `{ id, x, y }` | Jogador morreu |
+
+## 🎯 Sistema de Matchmaking
+
+O servidor implementa um **matchmaking inteligente** que prioriza encher salas existentes com jogadores reais antes de criar novas salas.
+
+### **Como Funciona:**
+
+1. **Jogador conecta** → Servidor procura salas com espaço disponível
+2. **Prioriza salas mais cheias** → Ordena por número de jogadores reais (maior para menor)
+3. **Entra na sala mais cheia** → Maximiza interação entre jogadores reais
+4. **Remove um bot** → Mantém sempre 50 entidades por sala
+5. **Cria nova sala** → Apenas quando todas as salas estiverem com 50 jogadores
+
+### **Exemplo:**
+
+```
+Jogador 1 → Sala A (1 real + 49 bots)
+Jogador 2 → Sala A (2 reais + 48 bots) ✅ Mesma sala!
+Jogador 3 → Sala A (3 reais + 47 bots) ✅ Mesma sala!
+...
+Jogador 50 → Sala A (50 reais + 0 bots) ✅ Sala cheia!
+Jogador 51 → Sala B (1 real + 49 bots) ✅ Nova sala criada
+```
+
+### **Benefícios:**
+
+- ✅ Jogadores reais jogam juntos
+- ✅ Melhor experiência multiplayer
+- ✅ Uso eficiente de recursos do servidor
+- ✅ Transição suave de bots para jogadores reais
 
 ## ⚙️ Configuração
 

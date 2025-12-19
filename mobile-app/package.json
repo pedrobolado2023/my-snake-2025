@@ -19,9 +19,10 @@
     "license": "MIT",
     "dependencies": {
         "@capacitor/android": "^5.5.1",
-        "@capacitor/core": "^5.5.1",
         "@capacitor/cli": "^5.5.1",
+        "@capacitor/core": "^5.5.1",
         "@capacitor/splash-screen": "^5.0.6",
-        "@capacitor/status-bar": "^5.0.6"
+        "@capacitor/status-bar": "^5.0.6",
+        "fs-extra": "^11.3.3"
     }
 }

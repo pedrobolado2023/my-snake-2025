@@ -19,12 +19,31 @@ Este guia mostra como gerar o APK do jogo para publicar na Google Play Store.
   - Android SDK Platform
   - Android Virtual Device (opcional, para testes)
 
-### 3. Configurar Variáveis de Ambiente
+### 3. Configurar Variáveis de Ambiente do Android SDK
 Adicione ao PATH do Windows:
 ```
 C:\Users\SEU_USUARIO\AppData\Local\Android\Sdk\platform-tools
 C:\Users\SEU_USUARIO\AppData\Local\Android\Sdk\tools
 ```
+
+### 4. Configurar Variável de Ambiente do Java (JDK)
+O comando `keytool` pode não ser encontrado se o Java não estiver no PATH do sistema. O Android Studio já inclui um JDK que podemos usar.
+
+1.  **Encontre a pasta do JDK do Android Studio**:
+    O caminho geralmente é: `C:\Program Files\Android\Android Studio\jbr`
+
+2.  **Adicione ao PATH do Windows**:
+    Adicione a seguinte pasta ao PATH do sistema (além das do Android SDK):
+    ```
+    C:\Program Files\Android\Android Studio\jbr\bin
+    ```
+
+3.  **(Opcional) Crie a variável JAVA_HOME**:
+    - Nome da variável: `JAVA_HOME`
+    - Valor da variável: `C:\Program Files\Android\Android Studio\jbr`
+
+Após adicionar ao PATH, **reinicie o terminal (ou o computador)** e tente o comando `keytool` novamente.
+
 
 ---
 

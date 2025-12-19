@@ -158,7 +158,30 @@ class GameRoom {
     }
 }
 
-// Obter ou criar sala
+// Encontrar a melhor sala disponível (matchmaking)
+function findBestAvailableRoom() {
+    // Procurar salas existentes com espaço disponível
+    const availableRooms = Array.from(rooms.values())
+        .filter(room => room.players.size < CONFIG.MAX_PLAYERS_PER_ROOM)
+        .sort((a, b) => {
+            // Priorizar salas com mais jogadores reais (para encher primeiro)
+            return b.players.size - a.players.size;
+        });
+
+    // Se encontrou uma sala disponível, retornar ela
+    if (availableRooms.length > 0) {
+        return availableRooms[0];
+    }
+
+    // Se não há salas disponíveis, criar uma nova
+    const newRoomId = `room-${Date.now()}`;
+    const newRoom = new GameRoom(newRoomId);
+    rooms.set(newRoomId, newRoom);
+    console.log(`🆕 Nova sala criada: ${newRoomId}`);
+    return newRoom;
+}
+
+// Obter ou criar sala (mantido para compatibilidade, mas não usado no matchmaking)
 function getOrCreateRoom(roomId) {
     if (!rooms.has(roomId)) {
         rooms.set(roomId, new GameRoom(roomId));
@@ -175,28 +198,28 @@ io.on('connection', (socket) => {
 
     // Entrar em uma sala
     socket.on('joinRoom', (data) => {
-        const roomId = data.roomId || 'global';
         const playerData = data.player || {};
 
-        currentRoomId = roomId;
-        currentRoom = getOrCreateRoom(roomId);
+        // MATCHMAKING: Encontrar a melhor sala disponível
+        currentRoom = findBestAvailableRoom();
+        currentRoomId = currentRoom.id;
 
         // Adicionar jogador à sala
         currentRoom.addPlayer(socket.id, playerData);
 
         // Entrar no room do Socket.io
-        socket.join(roomId);
+        socket.join(currentRoomId);
 
         // Enviar estado inicial
         socket.emit('gameState', currentRoom.getGameState());
 
         // Notificar outros jogadores
-        socket.to(roomId).emit('playerJoined', {
+        socket.to(currentRoomId).emit('playerJoined', {
             id: socket.id,
             name: playerData.name
         });
 
-        console.log(`✅ ${playerData.name} entrou na sala ${roomId}`);
+        console.log(`✅ ${playerData.name} entrou na sala ${currentRoomId} (${currentRoom.players.size} jogadores)`);
     });
 
     // Atualizar posição do jogador
@@ -265,11 +288,13 @@ app.get('/health', (req, res) => {
 // Rota de estatísticas
 app.get('/stats', (req, res) => {
     const stats = {
+        totalRooms: rooms.size,
         rooms: Array.from(rooms.entries()).map(([id, room]) => ({
             id: id,
             players: room.players.size,
             bots: room.bots.size,
-            total: room.getTotalEntities()
+            total: room.getTotalEntities(),
+            playerNames: Array.from(room.players.values()).map(p => p.name)
         }))
     };
     res.json(stats);
