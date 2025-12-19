@@ -1,7 +1,7 @@
 // Configurações do Jogo
 const CONFIG = {
     // Arena
-    ARENA_SIZE: 5000,
+    ARENA_SIZE: 3000, // Reduzido de 5000 para 3000 (tela mais próxima)
     ARENA_SHAPE: 'circle', // 'circle' ou 'square'
     ARENA_BORDER_WIDTH: 20,
 
@@ -74,28 +74,46 @@ const CONFIG = {
         BORDER: '#DC143C', // Vermelho Natal para a borda
     },
 
-    // Skins disponíveis
+    // Categorias de Skins
+    SKIN_CATEGORIES: {
+        BASICO: 'Básico',
+        ANIMAIS: 'Animais',
+        ESPECIAIS: 'Especiais',
+        PREMIUM: 'Premium'
+    },
+
+    // Skins disponíveis com categorias e estilos
     SKINS: [
-        { id: 'cyan', name: 'Cyan', colors: ['#00ffcc', '#00b4d8'] },
-        { id: 'purple', name: 'Purple', colors: ['#9d4edd', '#c77dff'] },
-        { id: 'pink', name: 'Pink', colors: ['#ff3366', '#ff6b9d'] },
-        { id: 'green', name: 'Green', colors: ['#06ffa5', '#52b788'] },
-        { id: 'yellow', name: 'Yellow', colors: ['#ffea00', '#ffd60a'] },
-        { id: 'orange', name: 'Orange', colors: ['#ff6b35', '#ff9f1c'] },
-        { id: 'blue', name: 'Blue', colors: ['#00b4d8', '#0077b6'] },
-        { id: 'red', name: 'Red', colors: ['#e63946', '#f72585'] },
-        { id: 'rainbow', name: 'Rainbow', colors: ['#ff3366', '#ffea00', '#06ffa5', '#00b4d8', '#9d4edd'] },
-        { id: 'fire', name: 'Fire', colors: ['#ff0000', '#ff6b00', '#ffea00'] },
-        { id: 'ice', name: 'Ice', colors: ['#00ffff', '#4dd0e1', '#b3e5fc'] },
-        { id: 'toxic', name: 'Toxic', colors: ['#39ff14', '#00ff00', '#76ff03'] },
-        { id: 'galaxy', name: 'Galaxy', colors: ['#1a0033', '#4a148c', '#7b1fa2', '#ce93d8'] },
-        { id: 'sunset', name: 'Sunset', colors: ['#ff6b6b', '#ff8c42', '#ffd93d'] },
-        { id: 'ocean', name: 'Ocean', colors: ['#006994', '#0099cc', '#00ccff'] },
-        { id: 'forest', name: 'Forest', colors: ['#2d5016', '#4a7c2f', '#6ba547'] },
-        { id: 'lava', name: 'Lava', colors: ['#8b0000', '#ff4500', '#ff6347'] },
-        { id: 'gold', name: 'Gold', colors: ['#ffd700', '#ffed4e', '#fff9c4'] },
-        { id: 'silver', name: 'Silver', colors: ['#c0c0c0', '#d3d3d3', '#e8e8e8'] },
-        { id: 'neon', name: 'Neon', colors: ['#ff00ff', '#00ff00', '#00ffff', '#ff00ff'] },
+        // Básico - Cores sólidas e gradientes simples
+        { id: 'orange', name: 'Brilho', category: 'BASICO', colors: ['#ff6b35', '#ff9f1c'], pattern: 'solid', unlocked: true },
+        { id: 'gray', name: 'Cinza', category: 'BASICO', colors: ['#6c757d', '#495057'], pattern: 'solid', unlocked: true },
+        { id: 'cyan', name: 'Ciano', category: 'BASICO', colors: ['#00ffcc', '#00b4d8'], pattern: 'solid', unlocked: true },
+        { id: 'green', name: 'Verde', category: 'BASICO', colors: ['#06ffa5', '#52b788'], pattern: 'solid', unlocked: true },
+        { id: 'yellow', name: 'Amarelo', category: 'BASICO', colors: ['#ffea00', '#ffd60a'], pattern: 'solid', unlocked: true },
+        { id: 'darkgreen', name: 'Verde Escuro', category: 'BASICO', colors: ['#2d5016', '#4a7c2f'], pattern: 'solid', unlocked: true },
+
+        // Animais - Padrões inspirados em animais
+        { id: 'cow', name: 'Vaca', category: 'ANIMAIS', colors: ['#ffffff', '#000000'], pattern: 'spots', unlocked: false, requirement: 'Jogue 3 dias consecutivos' },
+        { id: 'rabbit', name: 'Coelho', category: 'ANIMAIS', colors: ['#f5f5f5', '#e0e0e0'], pattern: 'solid', unlocked: false, requirement: 'Alcance 500 pontos' },
+        { id: 'cat', name: 'Gato', category: 'ANIMAIS', colors: ['#d4a574', '#c19a6b'], pattern: 'stripes', unlocked: false, requirement: 'Alcance 750 pontos' },
+        { id: 'bear', name: 'Urso', category: 'ANIMAIS', colors: ['#8b4513', '#a0522d'], pattern: 'solid', unlocked: false, requirement: 'Alcance 1000 pontos' },
+        { id: 'fox', name: 'Raposa', category: 'ANIMAIS', colors: ['#ff6347', '#ff7f50'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 1250 pontos' },
+        { id: 'dragon', name: 'Dragão', category: 'ANIMAIS', colors: ['#9370db', '#ba55d3'], pattern: 'scales', unlocked: false, requirement: 'Alcance 1500 pontos' },
+
+        // Especiais - Padrões únicos e complexos
+        { id: 'snake', name: 'Cobra', category: 'ESPECIAIS', colors: ['#2d5016', '#4a7c2f', '#6ba547'], pattern: 'scales', unlocked: false, requirement: 'Mate 5 cobras' },
+        { id: 'rainbow', name: 'Arco-íris', category: 'ESPECIAIS', colors: ['#ff3366', '#ffea00', '#06ffa5', '#00b4d8', '#9d4edd'], pattern: 'rainbow', unlocked: false, requirement: 'Alcance 2000 pontos' },
+        { id: 'lion', name: 'Leão', category: 'ESPECIAIS', colors: ['#daa520', '#b8860b'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 2500 pontos' },
+        { id: 'tiger', name: 'Tigre', category: 'ESPECIAIS', colors: ['#ff8c00', '#000000'], pattern: 'stripes', unlocked: false, requirement: 'Alcance 3000 pontos' },
+        { id: 'panda', name: 'Panda', category: 'ESPECIAIS', colors: ['#ffffff', '#000000'], pattern: 'panda', unlocked: false, requirement: 'Alcance 3500 pontos' },
+
+        // Premium - Skins raras e especiais
+        { id: 'fire', name: 'Fogo', category: 'PREMIUM', colors: ['#ff0000', '#ff6b00', '#ffea00'], pattern: 'fire', unlocked: false, requirement: 'Alcance 4000 pontos' },
+        { id: 'ice', name: 'Gelo', category: 'PREMIUM', colors: ['#00ffff', '#4dd0e1', '#b3e5fc'], pattern: 'ice', unlocked: false, requirement: 'Alcance 4500 pontos' },
+        { id: 'toxic', name: 'Tóxico', category: 'PREMIUM', colors: ['#39ff14', '#00ff00', '#76ff03'], pattern: 'toxic', unlocked: false, requirement: 'Alcance 5000 pontos' },
+        { id: 'galaxy', name: 'Galáxia', category: 'PREMIUM', colors: ['#1a0033', '#4a148c', '#7b1fa2', '#ce93d8'], pattern: 'galaxy', unlocked: false, requirement: 'Alcance 6000 pontos' },
+        { id: 'gold', name: 'Ouro', category: 'PREMIUM', colors: ['#ffd700', '#ffed4e', '#fff9c4'], pattern: 'metallic', unlocked: false, requirement: 'Alcance 7500 pontos' },
+        { id: 'neon', name: 'Neon', category: 'PREMIUM', colors: ['#ff00ff', '#00ff00', '#00ffff', '#ff00ff'], pattern: 'neon', unlocked: false, requirement: 'Alcance 10000 pontos' },
     ],
 
     // Performance

@@ -15,46 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeMenu() {
-    // Gerar skins no menu
-    const skinGrid = document.getElementById('skin-grid');
-
-    CONFIG.SKINS.forEach((skin, index) => {
-        const skinOption = document.createElement('div');
-        skinOption.className = 'skin-option';
-        skinOption.dataset.skinId = skin.id;
-
-        // Criar gradiente para a skin
-        if (skin.colors.length === 1) {
-            skinOption.style.background = skin.colors[0];
-        } else {
-            const gradient = `linear-gradient(135deg, ${skin.colors.join(', ')})`;
-            skinOption.style.background = gradient;
-        }
-
-        // Selecionar primeira skin por padrão
-        if (index === 0) {
-            skinOption.classList.add('selected');
-        }
-
-        skinOption.addEventListener('click', () => selectSkin(skin.id));
-        skinGrid.appendChild(skinOption);
-    });
-
     // Atualizar contador de jogadores online (simulado)
     updateOnlineCount();
     setInterval(updateOnlineCount, 5000);
-}
-
-function selectSkin(skinId) {
-    selectedSkinId = skinId;
-
-    // Atualizar visual
-    document.querySelectorAll('.skin-option').forEach(option => {
-        option.classList.remove('selected');
-        if (option.dataset.skinId === skinId) {
-            option.classList.add('selected');
-        }
-    });
 }
 
 function updateOnlineCount() {
@@ -64,10 +27,15 @@ function updateOnlineCount() {
 }
 
 function setupEventListeners() {
-    // Botão Play
-    document.getElementById('play-button').addEventListener('click', startGame);
+    // Botão Play - Vai para seleção de skins
+    document.getElementById('play-button').addEventListener('click', () => {
+        showScreen('skin-selection');
+        if (skinSelectionManager) {
+            skinSelectionManager.initialize();
+        }
+    });
 
-    // Botão Play Again
+    // Botão Play Again - Reinicia o jogo com a skin atual
     document.getElementById('play-again-button').addEventListener('click', startGame);
 
     // Botão Menu
@@ -81,13 +49,20 @@ function setupEventListeners() {
     // Enter no campo de nome
     document.getElementById('player-name').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            startGame();
+            showScreen('skin-selection');
+            if (skinSelectionManager) {
+                skinSelectionManager.initialize();
+            }
         }
     });
 }
 
 function startGame() {
     const playerName = document.getElementById('player-name').value.trim() || 'Player';
+
+    // Obter skin selecionada
+    const savedSkin = localStorage.getItem('selectedSkin');
+    selectedSkinId = savedSkin || CONFIG.SKINS[0].id;
 
     // Criar ou reiniciar o jogo
     if (!game) {

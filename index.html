@@ -7,6 +7,7 @@
     <meta name="description" content="My Snake 2025 - Jogo de cobra online">
     <title>My Snake 2025 - Snake Game</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="skin-selection.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -37,13 +38,6 @@
                     <input type="text" id="player-name" maxlength="15" placeholder="Digite seu nome..." value="Player">
                 </div>
 
-                <div class="skin-selector">
-                    <label>Escolha sua Skin</label>
-                    <div class="skin-grid" id="skin-grid">
-                        <!-- Skins serão geradas via JavaScript -->
-                    </div>
-                </div>
-
                 <button id="play-button" class="btn-primary">
                     <span class="btn-icon">▶</span>
                     <span class="btn-text">JOGAR AGORA</span>
@@ -60,6 +54,63 @@
                         <span class="stat-value" id="players-online">0</span>
                         <span class="stat-label">Jogadores Online</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Seleção de Skins -->
+    <div id="skin-selection-screen" class="screen">
+        <div class="skin-selection-container">
+            <div class="skin-selection-header">
+                <button id="back-to-menu" class="back-button">
+                    <span>←</span> Voltar
+                </button>
+                <h2 class="skin-selection-title">
+                    <span class="title-icon">🎨</span>
+                    ESCOLHA SUA SKIN
+                </h2>
+            </div>
+
+            <div class="skin-selection-content">
+                <!-- Filtros de Categoria -->
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="ALL">
+                        Tudo <span class="category-count" id="count-all">0</span>
+                    </button>
+                    <button class="category-btn" data-category="BASICO">
+                        Básico <span class="category-count" id="count-basico">0</span>
+                    </button>
+                    <button class="category-btn" data-category="ANIMAIS">
+                        Animais <span class="category-count" id="count-animais">0</span>
+                    </button>
+                    <button class="category-btn" data-category="ESPECIAIS">
+                        Especiais <span class="category-count" id="count-especiais">0</span>
+                    </button>
+                    <button class="category-btn" data-category="PREMIUM">
+                        Premium <span class="category-count" id="count-premium">0</span>
+                    </button>
+                </div>
+
+                <!-- Grid de Skins -->
+                <div class="skins-display-grid" id="skins-display-grid">
+                    <!-- Skins serão geradas via JavaScript -->
+                </div>
+
+                <!-- Informações da Skin Selecionada -->
+                <div class="skin-info-panel">
+                    <h3 id="selected-skin-name">Brilho</h3>
+                    <p id="selected-skin-description">Skin básica desbloqueada</p>
+                    <div class="skin-progress" id="skin-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <p class="progress-text" id="progress-text">0/100</p>
+                    </div>
+                    <button id="select-skin-button" class="btn-primary">
+                        <span class="btn-icon">✓</span>
+                        <span class="btn-text">SELECIONAR</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -195,6 +246,7 @@
     <script src="js/systems/Renderer.js"></script>
     <script src="js/systems/CollisionSystem.js"></script>
     <script src="js/systems/SnowSystem.js"></script> <!-- Tema de Natal ❄️ -->
+    <script src="js/SkinSelectionManager.js"></script>
     <script src="js/Game.js"></script>
     <script src="js/main.js"></script>
 </body>
