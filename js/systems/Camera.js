@@ -18,7 +18,7 @@ class Camera {
         this.targetY = snake.y;
 
         // Calcular zoom baseado no comprimento da cobra
-        const baseZoom = 1;
+        const baseZoom = CONFIG.ZOOM_MAX;
         const zoomReduction = snake.length * CONFIG.ZOOM_FACTOR;
         this.targetZoom = Utils.clamp(
             baseZoom - zoomReduction,

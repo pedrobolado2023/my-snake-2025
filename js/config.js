@@ -28,20 +28,22 @@ const CONFIG = {
     FOOD_GIANT_SPAWN_INTERVAL: 60000, // Aumentado de 30s para 60s (mais rara)
     FOOD_GIANT_COLOR: '#FFD700',
 
-    // Partículas (reduzidas para melhor performance)
-    PARTICLE_LIFETIME: 800, // Reduzido de 1000ms
-    PARTICLE_COUNT_ON_DEATH: 10, // Reduzido de 20
-    PARTICLE_COUNT_ON_EAT: 2, // Reduzido de 5
+    // Partículas (reduzidas para melhor performance/memória)
+    MAX_PARTICLES: 100, // Limite máximo de partículas na tela (CRÍTICO para memória)
+    PARTICLE_LIFETIME: 500, // Reduzido de 800ms para 500ms
+    PARTICLE_COUNT_ON_DEATH: 5, // Reduzido de 10 para 5
+    PARTICLE_COUNT_ON_EAT: 1, // Reduzido de 2 para 1
 
     // Mobile - Otimizações automáticas
     MOBILE_OPTIMIZATIONS: {
         REDUCE_BOTS: true, // Reduzir bots no mobile
         REDUCE_PARTICLES: true, // Menos partículas
         REDUCE_FOOD: true, // Menos comida
-        BOTS_COUNT: 3, // Apenas 3 bots no mobile (ao invés de 5)
-        FOOD_MIN_COUNT: 50, // Menos comida no mobile
-        PARTICLE_COUNT_ON_DEATH: 5, // Metade das partículas
-        PARTICLE_COUNT_ON_EAT: 1, // Apenas 1 partícula
+        BOTS_COUNT: 25, // Reduzido de 3 para 25 (ajuste anterior estava muito baixo?)
+        FOOD_MIN_COUNT: 40, // Menos comida no mobile
+        MAX_PARTICLES: 50, // Limite ainda menor no mobile
+        PARTICLE_COUNT_ON_DEATH: 3, // Metade das partículas
+        PARTICLE_COUNT_ON_EAT: 0, // Nenhuma partícula ao comer no mobile
     },
 
     // Bots
@@ -49,8 +51,8 @@ const CONFIG = {
 
     // Câmera - Zoom aumentado para cobrinha mais próxima
     CAMERA_LERP_FACTOR: 0.1,
-    ZOOM_MIN: 0.8, // Aumentado de 0.5 para 0.8 (mais zoom)
-    ZOOM_MAX: 1.5, // Aumentado de 1.2 para 1.5 (ainda mais zoom)
+    ZOOM_MIN: 0.6, // Limite de zoom out (quanto maior, mais próximo mesmo quando grande)
+    ZOOM_MAX: 1.3, // Zoom inicial (maior = mais próximo)
     ZOOM_FACTOR: 0.0002, // Reduzido de 0.0003 (zoom mais gradual)
 
     // Renderização - TEMA DE NATAL 🎅❄️
