@@ -308,12 +308,6 @@ class Game {
     updateServerBots(serverBots) {
         if (!serverBots || !Array.isArray(serverBots)) return;
 
-        // Se o servidor mandar 0 bots (sala vazia/bug), permitir bots locais
-        if (serverBots.length === 0) {
-            this.usingServerBots = false;
-            return;
-        }
-
         // Sinalizar que estamos usando bots do servidor para desativar spawn local
         this.usingServerBots = true;
 
@@ -653,13 +647,6 @@ class Game {
         if (now - this.lastLeaderboardUpdateTime > this.leaderboardUpdateInterval) {
             this.updateLeaderboard();
             this.lastLeaderboardUpdateTime = now;
-
-            // Debug info
-            const botCount = this.snakes.filter(s => s.isBot).length;
-            const debugEl = document.getElementById('debug-bot-count');
-            if (debugEl) {
-                debugEl.textContent = botCount;
-            }
         }
     }
 
