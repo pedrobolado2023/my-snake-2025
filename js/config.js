@@ -39,7 +39,8 @@ const CONFIG = {
         REDUCE_BOTS: true, // Reduzir bots no mobile
         REDUCE_PARTICLES: true, // Menos partículas
         REDUCE_FOOD: true, // Menos comida
-        BOTS_COUNT: 25, // Reduzido de 3 para 25 (ajuste anterior estava muito baixo?)
+        REDUCE_FOOD: true, // Menos comida
+        BOTS_COUNT: 0, // Remover bots (0)
         FOOD_MIN_COUNT: 40, // Menos comida no mobile
         MAX_PARTICLES: 50, // Limite ainda menor no mobile
         PARTICLE_COUNT_ON_DEATH: 3, // Metade das partículas
@@ -47,7 +48,7 @@ const CONFIG = {
     },
 
     // Bots
-    BOT_COUNT_DESKTOP: 50,
+    BOT_COUNT_DESKTOP: 0, // Remover bots (0)
 
     // Câmera - Zoom aumentado para cobrinha mais próxima
     CAMERA_LERP_FACTOR: 0.1,
