@@ -146,6 +146,12 @@ class MultiplayerManager {
             }
         });
 
+        // Sincronizar jogadores remotos no jogo
+        if (this.game) {
+            const others = playersToUpdate.filter(p => p.id !== this.socket.id);
+            this.game.updateRemotePlayers(others);
+        }
+
         // Atualizar bots (com otimização)
         if (this.game && state.bots) {
             this.game.updateServerBots(state.bots);

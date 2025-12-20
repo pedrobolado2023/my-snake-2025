@@ -367,6 +367,68 @@ class Game {
         });
     }
 
+    // Atualizar jogadores remotos (multiplayer) - NOVO 🆕
+    updateRemotePlayers(remotePlayers) {
+        if (!remotePlayers || !Array.isArray(remotePlayers)) return;
+
+        // 1. Criar mapa para acesso rápido
+        const playerMap = new Map();
+        remotePlayers.forEach(p => playerMap.set(p.id, p));
+
+        // 2. Atualizar cobras existentes e remover as que saíram
+        this.snakes = this.snakes.filter(snake => {
+            // Ignorar: Jogador local e Bots
+            if (snake.id === this.player?.id || snake.isBot) return true;
+
+            // Se for snake remota (não é bot, não é player local), verificar se ainda existe
+            const serverData = playerMap.get(snake.id);
+
+            if (serverData) {
+                // Atualizar
+                const dist = Utils.distance(snake.x, snake.y, serverData.x, serverData.y);
+                if (dist > 500) {
+                    snake.x = serverData.x;
+                    snake.y = serverData.y;
+                } else {
+                    snake.x = Utils.lerp(snake.x, serverData.x, 0.3);
+                    snake.y = Utils.lerp(snake.y, serverData.y, 0.3);
+                }
+
+                snake.length = serverData.length;
+                snake.angle = serverData.angle || snake.angle;
+                snake.score = serverData.score || snake.score;
+
+                playerMap.delete(snake.id);
+                return true;
+            } else {
+                // Jogador saiu da lista -> remover
+                return false;
+            }
+        });
+
+        // 3. Adicionar novos jogadores
+        playerMap.forEach((playerData) => {
+            // Criar nova cobra para o jogador remoto
+            // Usar skin padrão ou aleatória por enquanto (ideal seria receber ID da skin)
+            const skin = CONFIG.SKINS[0];
+
+            const snake = new Snake(
+                playerData.id, // ID já vem correto
+                playerData.name || 'Player',
+                playerData.x || 0,
+                playerData.y || 0,
+                skin
+            );
+
+            snake.isBot = false;
+            snake.isPlayer = false;
+            snake.isRemote = true; // Marcação importante
+            snake.length = playerData.length || 10;
+
+            this.snakes.push(snake);
+        });
+    }
+
     checkCollisions() {
         // Construir spatial grid
         this.collisionSystem.buildSpatialGrid(this.snakes);
