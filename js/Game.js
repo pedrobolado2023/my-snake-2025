@@ -308,6 +308,12 @@ class Game {
     updateServerBots(serverBots) {
         if (!serverBots || !Array.isArray(serverBots)) return;
 
+        // Se o servidor mandar 0 bots (sala vazia/bug), permitir bots locais
+        if (serverBots.length === 0) {
+            this.usingServerBots = false;
+            return;
+        }
+
         // Sinalizar que estamos usando bots do servidor para desativar spawn local
         this.usingServerBots = true;
 
