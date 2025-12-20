@@ -42,6 +42,12 @@ class Game {
         this.botsToSpawn = 0;
         this.lastBotSpawnTime = 0;
         this.botSpawnInterval = 1000; // Aumentado para 1s entre cada spawn (mais lento)
+
+        // Performance da UI
+        this.lastHUDUpdateTime = 0;
+        this.lastLeaderboardUpdateTime = 0;
+        this.hudUpdateInterval = 100; // Atualizar HUD a cada 100ms
+        this.leaderboardUpdateInterval = 1000; // Atualizar leaderboard a cada 1s
     }
 
     init(playerName, skinId) {
@@ -519,44 +525,48 @@ class Game {
     updateHUD() {
         if (!this.player) return;
 
-        // Nome do jogador
-        document.getElementById('hud-player-name').textContent = this.player.name;
+        const now = Date.now();
 
-        // Estatísticas
-        document.getElementById('hud-length').textContent = Math.floor(this.player.length);
-        document.getElementById('hud-score').textContent = Utils.formatNumber(this.player.score);
-        document.getElementById('hud-kills').textContent = this.player.kills;
+        // Atualizar HUD geral (Score, Length, etc)
+        if (now - this.lastHUDUpdateTime > this.hudUpdateInterval) {
+            // Nome do jogador
+            document.getElementById('hud-player-name').textContent = this.player.name;
 
-        // Boost
-        const boostSegments = Math.floor(this.player.length);
-        const boostPercent = (boostSegments / CONFIG.SNAKE_MIN_LENGTH_TO_BOOST) * 100;
-        document.getElementById('boost-segments').textContent = boostSegments;
+            // Estatísticas
+            document.getElementById('hud-length').textContent = Math.floor(this.player.length);
+            document.getElementById('hud-score').textContent = Utils.formatNumber(this.player.score);
+            document.getElementById('hud-kills').textContent = this.player.kills;
 
-        const boostBar = document.getElementById('boost-bar');
-        boostBar.style.width = Math.min(100, boostPercent) + '%';
+            // Boost
+            const boostSegments = Math.floor(this.player.length);
+            const boostPercent = (boostSegments / CONFIG.SNAKE_MIN_LENGTH_TO_BOOST) * 100;
+            document.getElementById('boost-segments').textContent = boostSegments;
 
-        // Mudar cor baseado no nível
-        boostBar.classList.remove('low', 'critical');
-        if (boostSegments < CONFIG.SNAKE_MIN_LENGTH_TO_BOOST) {
-            boostBar.classList.add('critical');
-        } else if (boostSegments < CONFIG.SNAKE_MIN_LENGTH_TO_BOOST * 1.5) {
-            boostBar.classList.add('low');
+            const boostBar = document.getElementById('boost-bar');
+            boostBar.style.width = Math.min(100, boostPercent) + '%';
+
+            // Mudar cor baseado no nível
+            boostBar.classList.remove('low', 'critical');
+            if (boostSegments < CONFIG.SNAKE_MIN_LENGTH_TO_BOOST) {
+                boostBar.classList.add('critical');
+            } else if (boostSegments < CONFIG.SNAKE_MIN_LENGTH_TO_BOOST * 1.5) {
+                boostBar.classList.add('low');
+            }
+
+            this.lastHUDUpdateTime = now;
         }
 
-        // Leaderboard
-        this.updateLeaderboard();
+        // Leaderboard (Atualizar com menos frequência ainda)
+        if (now - this.lastLeaderboardUpdateTime > this.leaderboardUpdateInterval) {
+            this.updateLeaderboard();
+            this.lastLeaderboardUpdateTime = now;
 
-        // Debug info
-        const botCount = this.snakes.filter(s => s.isBot).length;
-        const maxBots = Utils.isTouchDevice()
-            ? CONFIG.MOBILE_OPTIMIZATIONS.BOTS_COUNT
-            : CONFIG.BOT_COUNT_DESKTOP;
-
-        const debugEl = document.getElementById('debug-bot-count');
-        if (debugEl) {
-            debugEl.textContent = botCount;
-            // Opcional: mostrar também o alvo
-            // debugEl.textContent = `${ botCount }/${maxBots} (Q:${this.botsToSpawn})`;
+            // Debug info
+            const botCount = this.snakes.filter(s => s.isBot).length;
+            const debugEl = document.getElementById('debug-bot-count');
+            if (debugEl) {
+                debugEl.textContent = botCount;
+            }
         }
     }
 
@@ -564,41 +574,66 @@ class Game {
         const leaderboardList = document.getElementById('leaderboard-list');
 
         // Ordenar cobras por pontuação
-        const sortedSnakes = [...this.snakes]
+        const allSortedSnakes = [...this.snakes]
             .filter(s => !s.isDead)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 10);
+            .sort((a, b) => b.score - a.score);
+
+        const topSnakes = allSortedSnakes.slice(0, 10);
+
+        // Verificar se jogador está no top 10
+        const playerInTop10 = topSnakes.some(s => s.id === this.player?.id);
 
         // Limpar e reconstruir
         leaderboardList.innerHTML = '';
 
-        sortedSnakes.forEach((snake, index) => {
-            const item = document.createElement('div');
-            item.className = 'leaderboard-item';
-            if (snake.isPlayer) {
-                item.classList.add('current-player');
-            }
-
-            const rank = document.createElement('div');
-            rank.className = 'leaderboard-rank';
-            if (index === 0) rank.classList.add('top-1');
-            else if (index === 1) rank.classList.add('top-2');
-            else if (index === 2) rank.classList.add('top-3');
-            rank.textContent = `#${index + 1}`;
-
-            const name = document.createElement('div');
-            name.className = 'leaderboard-name';
-            name.textContent = snake.name;
-
-            const score = document.createElement('div');
-            score.className = 'leaderboard-score';
-            score.textContent = Utils.formatNumber(snake.score);
-
-            item.appendChild(rank);
-            item.appendChild(name);
-            item.appendChild(score);
-            leaderboardList.appendChild(item);
+        topSnakes.forEach((snake, index) => {
+            this.createLeaderboardItem(leaderboardList, snake, index + 1);
         });
+
+        // Se jogador não estiver no top 10, mostrar no final
+        if (this.player && !this.player.isDead && !playerInTop10) {
+            const playerRank = allSortedSnakes.findIndex(s => s.id === this.player.id) + 1;
+
+            // Separador
+            const separator = document.createElement('div');
+            separator.className = 'leaderboard-separator';
+            separator.textContent = '...';
+            separator.style.textAlign = 'center';
+            separator.style.color = '#fff';
+            separator.style.opacity = '0.5';
+            leaderboardList.appendChild(separator);
+
+            // Item do jogador
+            this.createLeaderboardItem(leaderboardList, this.player, playerRank);
+        }
+    }
+
+    createLeaderboardItem(container, snake, rankValue) {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        if (snake.isPlayer) {
+            item.classList.add('current-player');
+        }
+
+        const rank = document.createElement('div');
+        rank.className = 'leaderboard-rank';
+        if (rankValue === 1) rank.classList.add('top-1');
+        else if (rankValue === 2) rank.classList.add('top-2');
+        else if (rankValue === 3) rank.classList.add('top-3');
+        rank.textContent = `#${rankValue}`;
+
+        const name = document.createElement('div');
+        name.className = 'leaderboard-name';
+        name.textContent = snake.name;
+
+        const score = document.createElement('div');
+        score.className = 'leaderboard-score';
+        score.textContent = Utils.formatNumber(snake.score);
+
+        item.appendChild(rank);
+        item.appendChild(name);
+        item.appendChild(score);
+        container.appendChild(item);
     }
 
     handleGameOver() {
