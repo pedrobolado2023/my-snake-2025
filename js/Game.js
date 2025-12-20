@@ -325,8 +325,20 @@ class Game {
 
             if (serverData) {
                 // Atualizar dados do bot existente
-                snake.targetX = serverData.x;
-                snake.targetY = serverData.y;
+                // ATENÇÃO: Atualizar x/y diretamente pois Snake.js não usa targetX/Y para posição
+                // Se a distância for muito grande (lag/teleporte), mover suavemente
+                const dist = Utils.distance(snake.x, snake.y, serverData.x, serverData.y);
+
+                if (dist > 500) {
+                    // Teleporte se estiver muito longe
+                    snake.x = serverData.x;
+                    snake.y = serverData.y;
+                } else {
+                    // Interpolação simples
+                    snake.x = Utils.lerp(snake.x, serverData.x, 0.3);
+                    snake.y = Utils.lerp(snake.y, serverData.y, 0.3);
+                }
+
                 snake.length = serverData.length;
                 snake.angle = serverData.angle || snake.angle;
 
