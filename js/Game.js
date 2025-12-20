@@ -41,7 +41,7 @@ class Game {
         // Spawning gradual de bots
         this.botsToSpawn = 0;
         this.lastBotSpawnTime = 0;
-        this.botSpawnInterval = 100; // ms entre cada spawn
+        this.botSpawnInterval = 1000; // Aumentado para 1s entre cada spawn (mais lento)
     }
 
     init(playerName, skinId) {
@@ -112,11 +112,10 @@ class Game {
         const botsToCreate = Math.min(count, slotsAvailable);
 
         if (botsToCreate <= 0) {
-            // console.log('⚠️ Limite de bots atingido:', currentBots, '/', maxBots);
             return;
         }
 
-        console.log(`🤖 Spawning ${botsToCreate} bots. Total atual: ${currentBots + botsToCreate}/${maxBots}`);
+        // console.log(`🤖 Spawning ${botsToCreate} bots. Total atual: ${currentBots + botsToCreate}/${maxBots}`);
 
         const botNames = [
             'João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa', 'Lucas Ferreira',
@@ -391,12 +390,17 @@ class Game {
         if (snake.isPlayer) {
             // Game over será tratado no próximo update
         } else {
-            // Remover bot e spawnar um novo
+            // Remover bot e spawnar um novo com delay humanizado
+            // Delay aleatório entre 2 e 8 segundos para parecer que jogadores estão entrando/saindo
+            const respawnDelay = Utils.randomInt(2000, 8000);
+
             setTimeout(() => {
-                this.snakes = this.snakes.filter(s => s.id !== snake.id);
-                // Usar a fila de spawn para garantir entrada gradual e sem lag
-                this.botsToSpawn++;
-            }, 100);
+                if (this.snakes) {
+                    this.snakes = this.snakes.filter(s => s.id !== snake.id);
+                    // Usar a fila de spawn
+                    this.botsToSpawn++;
+                }
+            }, respawnDelay);
         }
     }
 
@@ -552,7 +556,7 @@ class Game {
         if (debugEl) {
             debugEl.textContent = botCount;
             // Opcional: mostrar também o alvo
-            // debugEl.textContent = `${botCount}/${maxBots} (Q:${this.botsToSpawn})`;
+            // debugEl.textContent = `${ botCount }/${maxBots} (Q:${this.botsToSpawn})`;
         }
     }
 
