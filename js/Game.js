@@ -292,6 +292,8 @@ class Game {
     }
 
     processBotQueue() {
+        if (this.usingServerBots) return; // Não spawnar bots locais se estiver em multiplayer
+
         const currentTime = performance.now();
         if (this.botsToSpawn > 0) {
             if (currentTime - this.lastBotSpawnTime > this.botSpawnInterval) {
@@ -302,33 +304,44 @@ class Game {
         }
     }
 
-    // Atualizar bots do servidor (multiplayer) - OTIMIZADO ⚡
+    // Atualizar bots do servidor (multiplayer) - CORRIGIDO 🛠️
     updateServerBots(serverBots) {
         if (!serverBots || !Array.isArray(serverBots)) return;
 
-        // OTIMIZAÇÃO: Limitar atualização no mobile
-        if (Utils.isTouchDevice() && Math.random() > 0.5) {
-            return; // Atualizar apenas 50% das vezes no mobile
-        }
+        // Sinalizar que estamos usando bots do servidor para desativar spawn local
+        this.usingServerBots = true;
 
-        // Não substituir bots locais se não houver jogadores no servidor
-        // Isso evita consumo desnecessário de memória
-        if (serverBots.length === 0) return;
+        // 1. Criar mapa dos bots do servidor para acesso rápido
+        const serverBotMap = new Map();
+        serverBots.forEach(bot => serverBotMap.set(bot.id, bot));
 
-        // Atualizar apenas se houver mudanças significativas
-        const currentBotCount = this.snakes.filter(s => s.isBot).length;
-        if (Math.abs(currentBotCount - serverBots.length) < 2) {
-            return; // Diferença pequena, não atualizar
-        }
+        // 2. Atualizar bots existentes e remover os que não estão mais no servidor
+        this.snakes = this.snakes.filter(snake => {
+            // Manter sempre o jogador e seus clones/partes
+            if (snake.id === this.player?.id || !snake.isBot) return true;
 
-        // Remover bots locais antigos
-        this.snakes = this.snakes.filter(snake => !snake.isBot || snake.id === this.player?.id);
+            // Verificar se o bot ainda existe no servidor
+            const serverData = serverBotMap.get(snake.id);
 
-        // Adicionar bots do servidor (limitado)
-        const maxBots = Utils.isTouchDevice() ? 3 : 10; // Limitar bots no mobile
-        const botsToAdd = serverBots.slice(0, maxBots);
+            if (serverData) {
+                // Atualizar dados do bot existente
+                snake.targetX = serverData.x;
+                snake.targetY = serverData.y;
+                snake.length = serverData.length;
+                snake.angle = serverData.angle || snake.angle;
 
-        botsToAdd.forEach(botData => {
+                // Remover do mapa para saber quem falta adicionar depois
+                serverBotMap.delete(snake.id);
+                return true;
+            } else {
+                // Bot não existe mais no servidor, remover localmente
+                return false;
+            }
+        });
+
+        // 3. Adicionar novos bots que sobraram no mapa
+        serverBotMap.forEach((botData) => {
+            // Limitar quantidade total se necessário (opcional)
             const bot = new Snake(
                 botData.x || 0,
                 botData.y || 0,
