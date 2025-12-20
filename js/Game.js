@@ -37,6 +37,11 @@ class Game {
         // Configuração do jogador
         this.playerName = 'Player';
         this.playerSkin = CONFIG.SKINS[0];
+
+        // Spawning gradual de bots
+        this.botsToSpawn = 0;
+        this.lastBotSpawnTime = 0;
+        this.botSpawnInterval = 100; // ms entre cada spawn
     }
 
     init(playerName, skinId) {
@@ -72,8 +77,12 @@ class Game {
             ? CONFIG.MOBILE_OPTIMIZATIONS.FOOD_MIN_COUNT
             : CONFIG.FOOD_MIN_COUNT;
 
-        // Criar cobras IA (bots)
-        this.spawnBots(botsCount);
+        // Configurar spawn gradual de bots
+        this.botsToSpawn = botsCount;
+        this.lastBotSpawnTime = 0;
+
+        // Se já tiver bots (reset), limpar
+        // this.spawnBots(botsCount); - REMOVIDO para evitar lag inicial
 
         // Gerar comida inicial
         this.spawnFood(foodCount);
@@ -183,6 +192,9 @@ class Game {
             this.player.boost(this.inputManager.isBoostActive());
         }
 
+        // Processar fila de nascimento de bots
+        this.processBotQueue();
+
         // Atualizar IA dos bots
         this.updateBots(deltaTime);
 
@@ -253,6 +265,17 @@ class Game {
         });
 
         return nearest;
+    }
+
+    processBotQueue() {
+        const currentTime = performance.now();
+        if (this.botsToSpawn > 0) {
+            if (currentTime - this.lastBotSpawnTime > this.botSpawnInterval) {
+                this.spawnBots(1);
+                this.botsToSpawn--;
+                this.lastBotSpawnTime = currentTime;
+            }
+        }
     }
 
     // Atualizar bots do servidor (multiplayer) - OTIMIZADO ⚡
