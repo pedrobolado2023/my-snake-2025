@@ -72,7 +72,7 @@ class Game {
         const isMobile = Utils.isTouchDevice();
         const botsCount = isMobile && CONFIG.MOBILE_OPTIMIZATIONS.REDUCE_BOTS
             ? CONFIG.MOBILE_OPTIMIZATIONS.BOTS_COUNT
-            : 5;
+            : CONFIG.BOT_COUNT_DESKTOP;
         const foodCount = isMobile && CONFIG.MOBILE_OPTIMIZATIONS.REDUCE_FOOD
             ? CONFIG.MOBILE_OPTIMIZATIONS.FOOD_MIN_COUNT
             : CONFIG.FOOD_MIN_COUNT;
@@ -101,6 +101,23 @@ class Game {
     }
 
     spawnBots(count) {
+        // Verificar limite total de bots (Player não conta, apenas bots)
+        const currentBots = this.snakes.filter(s => s.isBot).length;
+        const maxBots = Utils.isTouchDevice()
+            ? CONFIG.MOBILE_OPTIMIZATIONS.BOTS_COUNT
+            : CONFIG.BOT_COUNT_DESKTOP;
+
+        // Ajustar count para não exceder o máximo
+        const slotsAvailable = Math.max(0, maxBots - currentBots);
+        const botsToCreate = Math.min(count, slotsAvailable);
+
+        if (botsToCreate <= 0) {
+            // console.log('⚠️ Limite de bots atingido:', currentBots, '/', maxBots);
+            return;
+        }
+
+        console.log(`🤖 Spawning ${botsToCreate} bots. Total atual: ${currentBots + botsToCreate}/${maxBots}`);
+
         const botNames = [
             'João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa', 'Lucas Ferreira',
             'Juliana Lima', 'Rafael Souza', 'Camila Rodrigues', 'Bruno Alves', 'Fernanda Martins',
@@ -114,7 +131,7 @@ class Game {
             'Jéssica Viana', 'Marcio Guimarães', 'Adriana Fonseca', 'Alex Nascimento', 'Cristina Borges'
         ];
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < botsToCreate; i++) {
             const spawnPos = Utils.randomPositionInArena();
             const name = Utils.randomChoice(botNames);
             const skin = Utils.randomChoice(CONFIG.SKINS);
@@ -126,6 +143,8 @@ class Game {
                 spawnPos.y,
                 skin
             );
+
+            bot.isBot = true; // Necessário para contagem correta
 
             // Dar tamanho aleatório aos bots
             bot.grow(Utils.randomInt(0, 30));
@@ -375,7 +394,8 @@ class Game {
             // Remover bot e spawnar um novo
             setTimeout(() => {
                 this.snakes = this.snakes.filter(s => s.id !== snake.id);
-                this.spawnBots(1);
+                // Usar a fila de spawn para garantir entrada gradual e sem lag
+                this.botsToSpawn++;
             }, 100);
         }
     }
@@ -521,6 +541,19 @@ class Game {
 
         // Leaderboard
         this.updateLeaderboard();
+
+        // Debug info
+        const botCount = this.snakes.filter(s => s.isBot).length;
+        const maxBots = Utils.isTouchDevice()
+            ? CONFIG.MOBILE_OPTIMIZATIONS.BOTS_COUNT
+            : CONFIG.BOT_COUNT_DESKTOP;
+
+        const debugEl = document.getElementById('debug-bot-count');
+        if (debugEl) {
+            debugEl.textContent = botCount;
+            // Opcional: mostrar também o alvo
+            // debugEl.textContent = `${botCount}/${maxBots} (Q:${this.botsToSpawn})`;
+        }
     }
 
     updateLeaderboard() {

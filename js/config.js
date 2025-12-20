@@ -44,6 +44,9 @@ const CONFIG = {
         PARTICLE_COUNT_ON_EAT: 1, // Apenas 1 partícula
     },
 
+    // Bots
+    BOT_COUNT_DESKTOP: 50,
+
     // Câmera - Zoom aumentado para cobrinha mais próxima
     CAMERA_LERP_FACTOR: 0.1,
     ZOOM_MIN: 0.8, // Aumentado de 0.5 para 0.8 (mais zoom)
