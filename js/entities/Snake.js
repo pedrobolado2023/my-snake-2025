@@ -211,12 +211,19 @@ class Snake {
             const offsetY = Math.sin(segment.angle + Math.PI / 2) * waveOffset;
 
             // Desenhar brilho (reduzido)
-            if (this.isBoosting) {
-                ctx.shadowBlur = 10 * camera.zoom;
-                ctx.shadowColor = this.skin.colors[0];
+            // OTIMIZAÇÃO: Sem brilho para cobras remotas para evitar lag quando próximas
+            if (this.isPlayer) {
+                if (this.isBoosting) {
+                    ctx.shadowBlur = 10 * camera.zoom;
+                    ctx.shadowColor = this.skin.colors[0];
+                } else {
+                    ctx.shadowBlur = 5 * camera.zoom;
+                    ctx.shadowColor = this.skin.colors[0];
+                }
             } else {
-                ctx.shadowBlur = 5 * camera.zoom;
-                ctx.shadowColor = this.skin.colors[0];
+                // Remotos/Bots: Sem shadow ou muito leve
+                ctx.shadowBlur = 0;
+                ctx.shadowColor = 'transparent';
             }
 
             // Desenhar segmento

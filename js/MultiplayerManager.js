@@ -90,6 +90,7 @@ class MultiplayerManager {
 
         const playerData = {
             name: this.game.playerName || 'Player',
+            skin: this.game.player ? this.game.player.skin.id : 'orange', // Enviando skin ID
             x: this.game.player ? this.game.player.x : 0,
             y: this.game.player ? this.game.player.y : 0,
             angle: this.game.player ? this.game.player.angle : 0,

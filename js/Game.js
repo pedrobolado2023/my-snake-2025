@@ -409,8 +409,8 @@ class Game {
         // 3. Adicionar novos jogadores
         playerMap.forEach((playerData) => {
             // Criar nova cobra para o jogador remoto
-            // Usar skin padrão ou aleatória por enquanto (ideal seria receber ID da skin)
-            const skin = CONFIG.SKINS[0];
+            // Buscar skin pelo ID recebido
+            let skin = CONFIG.SKINS.find(s => s.id === playerData.skin) || CONFIG.SKINS[0];
 
             const snake = new Snake(
                 playerData.id, // ID já vem correto
