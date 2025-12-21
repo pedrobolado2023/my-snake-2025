@@ -48,26 +48,56 @@ class InputManager {
         const joystickContainer = document.getElementById('joystick-container');
         const joystickStick = document.getElementById('joystick-stick');
         const boostButton = document.getElementById('mobile-boost');
+        const mobileControls = document.getElementById('mobile-controls');
 
-        if (joystickContainer && joystickStick) {
-            // Joystick
-            joystickContainer.addEventListener('touchstart', (e) => {
+        if (joystickContainer && joystickStick && mobileControls) {
+            // Ocultar joystick inicialmente
+            joystickContainer.style.display = 'none';
+
+            // Joystick Dinâmico: Ouvir toques na tela inteira (camada mobile-controls)
+            mobileControls.addEventListener('touchstart', (e) => {
+                // Ignorar se tocou no botão de boost
+                if (e.target.closest('#mobile-boost')) return;
+
                 e.preventDefault();
+
+                // Reposicionar joystick onde tocou
+                const touch = e.touches[0];
+                const rect = mobileControls.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+
+                // Ajustar posição (centralizar)
+                // O container tem 120px, então subtrair 60px
+                joystickContainer.style.left = (x - 60) + 'px';
+                joystickContainer.style.bottom = 'auto'; // Resetar bottom
+                joystickContainer.style.top = (y - 60) + 'px';
+                joystickContainer.style.display = 'block';
+
                 this.joystickActive = true;
-                this.updateJoystick(e.touches[0], joystickContainer, joystickStick);
+                this.updateJoystick(touch, joystickContainer, joystickStick);
             });
 
-            joystickContainer.addEventListener('touchmove', (e) => {
+            mobileControls.addEventListener('touchmove', (e) => {
+                if (e.target.closest('#mobile-boost')) return;
                 e.preventDefault();
+
                 if (this.joystickActive) {
+                    // Encontrar o toque correto se houver múltiplos
+                    // Simplificação: usar o primeiro toque que não seja no boost? 
+                    // Para MVP, assumir touch[0] ou iterar.
+                    // Aqui mantemos simples: update com o primeiro toque
                     this.updateJoystick(e.touches[0], joystickContainer, joystickStick);
                 }
             });
 
-            joystickContainer.addEventListener('touchend', (e) => {
+            mobileControls.addEventListener('touchend', (e) => {
+                if (e.target.closest('#mobile-boost')) return;
                 e.preventDefault();
+
                 this.joystickActive = false;
                 joystickStick.style.transform = 'translate(-50%, -50%)';
+                joystickContainer.style.display = 'none'; // Ocultar ao soltar
             });
         }
 
@@ -75,12 +105,14 @@ class InputManager {
             // Botão de boost
             boostButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Evitar que o toque passe para o controle do joystick
                 this.boostActive = true;
                 boostButton.style.transform = 'scale(0.95)';
             });
 
             boostButton.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.boostActive = false;
                 boostButton.style.transform = 'scale(1)';
             });

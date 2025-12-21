@@ -1,0 +1,59 @@
+/* --- OTIMIZAÇÕES MOBILE --- */
+
+/* HUD Transparente (apenas texto visível) */
+.hud-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+/* Painéis específicos */
+.stats-panel, .leaderboard-panel, .boost-panel, .minimap-panel {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Itens do Leaderboard Transparentes */
+.leaderboard-item {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Highlight do jogador ainda visível mas sutil */
+.leaderboard-item.current-player {
+    background: rgba(0, 255, 204, 0.1) !important;
+    border: 1px solid rgba(0, 255, 204, 0.3) !important;
+}
+
+/* Barra de Boost mais discreta */
+.boost-bar-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+}
+
+/* Joystick Dinâmico */
+/* Base do Joystick (quase invisível) */
+.joystick-base {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: none !important;
+}
+
+/* Joystick Stick (mantém visível para saber onde está) */
+.joystick-stick {
+    opacity: 0.6;
+}
+
+/* Botão de Boost mais transparente */
+.boost-button {
+    background: rgba(6, 255, 165, 0.2) !important;
+    border-color: rgba(6, 255, 165, 0.3) !important;
+    backdrop-filter: none !important;
+    opacity: 0.8;
+}
+
+/* Texto do HUD mais legível (sombra) */
+.stat-text, .leaderboard-name, .boost-label, .boost-segments {
+    text-shadow: 1px 1px 2px black;
+}
