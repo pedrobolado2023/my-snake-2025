@@ -18,14 +18,14 @@ const CONFIG = {
     // Food
     FOOD_SIZE: 6, // Reduzido de 8 para 6
     FOOD_VALUE: 1,
-    FOOD_SPAWN_RATE: 2, // Reduzido de 5 para 2 por segundo
-    FOOD_MIN_COUNT: 80, // Reduzido de 200 para 80
+    FOOD_SPAWN_RATE: 5, // Aumentado de 2 para 5 por segundo
+    FOOD_MIN_COUNT: 200, // Aumentado de 80 para 200
     FOOD_DESPAWN_TIME: Infinity, // Comida nunca expira
 
     // Food Especial
     FOOD_GIANT_SIZE: 18, // Reduzido de 24 para 18
     FOOD_GIANT_VALUE: 10,
-    FOOD_GIANT_SPAWN_INTERVAL: 60000, // Aumentado de 30s para 60s (mais rara)
+    FOOD_GIANT_SPAWN_INTERVAL: 30000, // Reduzido de 60s para 30s (mais comum)
     FOOD_GIANT_COLOR: '#FFD700',
 
     // Partículas (reduzidas para melhor performance/memória)
@@ -41,7 +41,7 @@ const CONFIG = {
         REDUCE_FOOD: true, // Menos comida
         REDUCE_FOOD: true, // Menos comida
         BOTS_COUNT: 0, // Remover bots (0)
-        FOOD_MIN_COUNT: 40, // Menos comida no mobile
+        FOOD_MIN_COUNT: 80, // Aumentado de 40 para 80 no mobile
         MAX_PARTICLES: 50, // Limite ainda menor no mobile
         PARTICLE_COUNT_ON_DEATH: 3, // Metade das partículas
         PARTICLE_COUNT_ON_EAT: 0, // Nenhuma partícula ao comer no mobile
