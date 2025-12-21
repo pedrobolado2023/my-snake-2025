@@ -35,12 +35,18 @@ class Snake {
 
     initializeSegments() {
         this.segments = [];
+        this.path = [];
+        // Inicializar path e segmentos na posição inicial
         for (let i = 0; i < this.length; i++) {
+            const px = this.x - i * CONFIG.SNAKE_SEGMENT_SPACING;
+            const py = this.y;
             this.segments.push({
-                x: this.x - i * CONFIG.SNAKE_SEGMENT_SPACING,
-                y: this.y,
+                x: px,
+                y: py,
                 angle: this.angle
             });
+            // Adicionar pontos iniciais ao path para garantir que haja histórico suficiente
+            this.path.push({ x: px, y: py });
         }
     }
 
@@ -100,6 +106,10 @@ class Snake {
         this.x += Math.cos(this.angle) * this.speed * dt;
         this.y += Math.sin(this.angle) * this.speed * dt;
 
+        // Adicionar nova posição ao histórico do caminho
+        // Adicionamos sempre para garantir suavidade máxima
+        this.path.unshift({ x: this.x, y: this.y });
+
         // Atualizar segmentos
         this.updateSegments(dt);
 
@@ -117,42 +127,59 @@ class Snake {
             this.segments[0].angle = this.angle;
         }
 
-        // Atualizar segmentos seguintes
+        let pathInd = 0;
+        let currentDist = 0;
+
+        // Percorrer segmentos e posicionar no path
         for (let i = 1; i < Math.ceil(this.length); i++) {
+            // Criar segmento se não existir
             if (!this.segments[i]) {
-                // Criar novo segmento
-                const prev = this.segments[i - 1];
-                this.segments[i] = {
-                    x: prev.x,
-                    y: prev.y,
-                    angle: prev.angle
-                };
+                // Inicializa na posição do anterior ou da cauda atual
+                const prev = this.segments[i - 1] || this.segments[0];
+                this.segments[i] = { x: prev.x, y: prev.y, angle: prev.angle };
             }
 
-            const current = this.segments[i];
-            const previous = this.segments[i - 1];
+            const targetDist = i * CONFIG.SNAKE_SEGMENT_SPACING;
 
-            // Calcular direção para o segmento anterior
-            const dx = previous.x - current.x;
-            const dy = previous.y - current.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            // Navegar pelo path até encontrar a distância alvo acumulada
+            while (pathInd < this.path.length - 1) {
+                const p1 = this.path[pathInd];
+                const p2 = this.path[pathInd + 1];
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                const distSeg = Math.sqrt(dx * dx + dy * dy);
 
-            // Mover segmento em direção ao anterior
-            if (distance > CONFIG.SNAKE_SEGMENT_SPACING) {
-                const moveX = (dx / distance) * (distance - CONFIG.SNAKE_SEGMENT_SPACING);
-                const moveY = (dy / distance) * (distance - CONFIG.SNAKE_SEGMENT_SPACING);
+                if (currentDist + distSeg >= targetDist) {
+                    // Interpolação exata
+                    const remain = targetDist - currentDist;
+                    const ratio = remain / distSeg; // Quanto falta dentro deste segmento de path
 
-                current.x += moveX;
-                current.y += moveY;
+                    this.segments[i].x = p1.x - (dx * ratio);
+                    this.segments[i].y = p1.y - (dy * ratio);
+
+                    // Ângulo segue o path (de p2 para p1, pois estamos indo para trás no tempo/path)
+                    // O corpo aponta para a cabeça.
+                    this.segments[i].angle = Math.atan2(dy, dx);
+
+                    break; // Segmento posicionado, ir para o próximo 'i' (mantendo loop while onde está)
+                } else {
+                    currentDist += distSeg;
+                    pathInd++;
+                }
             }
-
-            // Atualizar ângulo do segmento
-            current.angle = Math.atan2(dy, dx);
         }
 
         // Remover segmentos extras
         while (this.segments.length > Math.ceil(this.length)) {
             this.segments.pop();
+        }
+
+        // Limpar path antigo (otimização de memória)
+        // Manter histórico suficiente para cobrir todo o comprimento + um pouco de folga
+        // Se pathInd (onde o último segmento ficou) for menor que path.length
+        // podemos cortar tudo depois de pathInd + buffer
+        if (pathInd < this.path.length - 20) {
+            this.path.splice(pathInd + 20); // Manter buffer de 20 pontos
         }
     }
 
