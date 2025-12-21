@@ -110,8 +110,13 @@ class Snake {
         this.y += Math.sin(this.angle) * this.speed * dt;
 
         // Adicionar nova posição ao histórico do caminho
-        // Adicionamos sempre para garantir suavidade máxima
-        this.path.unshift({ x: this.x, y: this.y });
+        // OTIMIZAÇÃO: Só adicionar se moveu uma distância mínima para evitar array gigante
+        // Antes: Adicionava todo frame
+        // Agora: Só se dist > 3 (quase o tamanho do espaçamento, mantém resolução boa mas usa menos memória)
+        const lastP = this.path[0];
+        if (!lastP || Utils.distance(this.x, this.y, lastP.x, lastP.y) > 3) {
+            this.path.unshift({ x: this.x, y: this.y });
+        }
 
         // Atualizar segmentos
         this.updateSegments(dt);
