@@ -6,31 +6,31 @@ const CONFIG = {
     ARENA_BORDER_WIDTH: 20,
 
     // Snake
-    SNAKE_INITIAL_LENGTH: 30, // Aumentado para compensar o menor espaçamento
-    SNAKE_SEGMENT_SIZE: 7, // Mantido
-    SNAKE_SEGMENT_SPACING: 1, // Reduzido drasticamente para ficar "lisa" (quase contínua)
+    SNAKE_INITIAL_LENGTH: 15, // Reduzido (espaçamento maior = cobra ocupa mesmo espaço com menos segmentos)
+    SNAKE_SEGMENT_SIZE: 7,
+    SNAKE_SEGMENT_SPACING: 3, // Aumentado de 1 para 3 (otimização de performance, ainda visualmente "lisa")
     SNAKE_BASE_SPEED: 200,
     SNAKE_BOOST_MULTIPLIER: 2,
     SNAKE_BOOST_COST_PER_SECOND: 0.5,
-    SNAKE_MIN_LENGTH_TO_BOOST: 50, // Aumentado pois a cobra terá mais segmentos agora
+    SNAKE_MIN_LENGTH_TO_BOOST: 20, // Ajustado para novo comprimento
     SNAKE_TURN_SPEED: 0.1,
 
     // Food
     FOOD_SIZE: 6,
     FOOD_VALUE: 1,
-    FOOD_SPAWN_RATE: 20, // Aumentado drasticamente (chuva de comida)
-    FOOD_MIN_COUNT: 500, // Mapa cheio de comida
-    FOOD_DESPAWN_TIME: Infinity, // Comida nunca expira
+    FOOD_SPAWN_RATE: 20,
+    FOOD_MIN_COUNT: 500,
+    FOOD_DESPAWN_TIME: Infinity,
 
     // Food Especial
-    FOOD_GIANT_SIZE: 18, // Reduzido de 24 para 18
+    FOOD_GIANT_SIZE: 18,
     FOOD_GIANT_VALUE: 10,
-    FOOD_GIANT_SPAWN_INTERVAL: 30000, // Reduzido de 60s para 30s (mais comum)
+    FOOD_GIANT_SPAWN_INTERVAL: 30000,
     FOOD_GIANT_COLOR: '#FFD700',
 
     // Partículas (reduzidas para melhor performance/memória)
-    MAX_PARTICLES: 100, // Limite máximo de partículas na tela (CRÍTICO para memória)
-    PARTICLE_LIFETIME: 500, // Reduzido de 800ms para 500ms
+    MAX_PARTICLES: 60, // Reduzido de 100 para 60 (CRÍTICO para memória em mapas cheios)
+    PARTICLE_LIFETIME: 300, // Reduzido de 500 para 300
     PARTICLE_COUNT_ON_DEATH: 5, // Reduzido de 10 para 5
     PARTICLE_COUNT_ON_EAT: 1, // Reduzido de 2 para 1
 

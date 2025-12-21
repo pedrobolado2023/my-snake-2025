@@ -174,10 +174,9 @@ class Snake {
             const sizeRatio = 0.7 + (i / this.segments.length) * 0.3;
 
             // Crescimento baseado no comprimento total
-            // Como espaçamento diminuiu de 6 para 1, teremos 6x mais segmentos.
-            // Ajustando fator de crescimento para não ficar gigante instantaneamente, mas crescer sempre.
+            // Ajustado para novo espaçamento (3)
             const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-            const growthFactor = Math.floor(this.segments.length / 50) * 1;
+            const growthFactor = Math.floor(this.segments.length / 15) * 1;
             const maxGrowth = 100; // Aumentado para permitir cobras muito gordas
             const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
 
@@ -864,7 +863,7 @@ class Snake {
     getHeadRadius() {
         // Tamanho base + crescimento baseado no comprimento
         const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-        const growthFactor = Math.floor(this.segments.length / 50) * 1;
+        const growthFactor = Math.floor(this.segments.length / 15) * 1; // Ajustado para novo espaçamento
         const maxGrowth = 100;
         return baseSize + Math.min(growthFactor, maxGrowth);
     }
