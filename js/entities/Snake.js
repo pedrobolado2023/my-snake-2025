@@ -161,38 +161,61 @@ class Snake {
 
         ctx.save();
 
+        // Calcular tamanho base da cobra (Cálculo otimizado fora do loop)
+        const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
+        const growthFactor = Math.floor(this.segments.length / 15) * 1;
+        const maxGrowth = 100;
+        const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
+
+        // Otimização Dinâmica de Renderização (LOD)
+        // Quanto maior a cobra, maior o passo entre segmentos desenhados
+        // Mantemos sobreposição visual (~40% do raio) para parecer contínua
+        // Step base é 1. Se raio for 50px, step pode ser maior.
+        // step = (radius * factor) / spacing
+        const minRadius = growthSize * 0.7; // Tamanho na cauda (pior caso)
+        const step = Math.max(1, Math.floor((minRadius * 0.4) / CONFIG.SNAKE_SEGMENT_SPACING));
+
         // Renderizar corpo (do fim para o início)
-        for (let i = this.segments.length - 1; i >= 0; i--) {
-            const segment = this.segments[i];
+        // Loop pula 'step' segmentos, mas garante que desenha segmentos suficientes
+        for (let i = this.segments.length - 1; i >= 0; i -= step) {
+            // Garantir que desenhamos a cabeça (i=0) se o loop pular ela por pouco
+            // Mas renderizamos o 0 explicitamente no final do loop se precisar? 
+            // Melhor: se estivermos muito perto do 0, forçamos 0 na próxima iteração
+            // Simplificação: Deixar o loop correr e desenhar o 0 explicitamente depois se não cair nele.
+            // Para consistência visual, desenhamos o 0 separadamente ou garantimos inclusão.
+
+            // Ajuste: Vamos forçar o desenho do índice 0 se passarmos por ele
+            let segmentIndex = i;
+            if (segmentIndex < step && segmentIndex > 0) {
+                // Se o próximo passo passaria do 0, não desenha agora, deixa o loop acabar
+                // e desenhamos o 0 no final? Não, o 0 é o último (topo).
+                // Vamos apenas desenhar o i atual.
+            }
+
+            const segment = this.segments[segmentIndex];
             const screenPos = camera.worldToScreen(segment.x, segment.y);
 
-            if (!camera.isVisible(segment.x, segment.y, CONFIG.SNAKE_SEGMENT_SIZE * 2)) {
+            if (!camera.isVisible(segment.x, segment.y, growthSize * 2 * camera.zoom)) {
                 continue;
             }
 
             // Calcular tamanho do segmento (maior na cabeça)
-            const sizeRatio = 0.7 + (i / this.segments.length) * 0.3;
-
-            // Crescimento baseado no comprimento total
-            // Ajustado para novo espaçamento (3)
-            const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-            const growthFactor = Math.floor(this.segments.length / 15) * 1;
-            const maxGrowth = 100; // Aumentado para permitir cobras muito gordas
-            const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
+            const sizeRatio = 0.7 + (segmentIndex / this.segments.length) * 0.3;
+            // growthSize já calculado fora
 
             const segmentSize = growthSize * sizeRatio * camera.zoom;
 
             // Adicionar efeito de onda
-            const waveOffset = Math.sin(this.wavePhase + i * 0.3) * 2 * camera.zoom;
+            const waveOffset = Math.sin(this.wavePhase + segmentIndex * 0.3) * 2 * camera.zoom;
             const offsetX = Math.cos(segment.angle + Math.PI / 2) * waveOffset;
             const offsetY = Math.sin(segment.angle + Math.PI / 2) * waveOffset;
 
             // Desenhar brilho (reduzido)
             if (this.isBoosting) {
-                ctx.shadowBlur = 10 * camera.zoom; // Reduzido de 25
+                ctx.shadowBlur = 10 * camera.zoom;
                 ctx.shadowColor = this.skin.colors[0];
             } else {
-                ctx.shadowBlur = 5 * camera.zoom; // Reduzido de 15
+                ctx.shadowBlur = 5 * camera.zoom;
                 ctx.shadowColor = this.skin.colors[0];
             }
 
@@ -202,7 +225,7 @@ class Snake {
                 screenPos.x + offsetX,
                 screenPos.y + offsetY,
                 segmentSize,
-                i
+                segmentIndex
             );
 
             ctx.fillStyle = gradient;
@@ -220,6 +243,47 @@ class Snake {
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.lineWidth = 2 * camera.zoom;
             ctx.stroke();
+        }
+
+        // Garantir renderização do segmento 0 (Cabeça base) se o loop pulou ele
+        // O loop i-- vai até 0. Se step > 1, pode parar no 1, 2... e pular o 0.
+        // Verificamos se (this.segments.length - 1) % step !== 0? 
+        // Mais fácil apenas desenhar o 0 sempre, mas com verificação de não sobrepor excessivamente?
+        // O Painter's algorithm diz que o último desenhado fica no topo. 0 deve ser o topo.
+        // Se desenharmos o 0 de novo, sem problemas. Mal não faz, e garante o topo.
+        if (this.segments.length > 0) {
+            const headBase = this.segments[0];
+            const headScreenPos = camera.worldToScreen(headBase.x, headBase.y);
+            // ... repetimos lógica de render para o 0? 
+            // Melhor refatorar em renderSegment? Não, inline é mais rápido. 
+            // Vamos copiar a lógica brevemente apenas para o 0, sem brilho extra pois já tem ou terá.
+
+            // Na verdade, a cabeça tem renderHead desenhando olhos.
+            // O corpo precisa desenhar o CÍRCULO BASE da cabeça.
+            // Vamos desenhar SEMPRE o 0 aqui no final para garantir.
+
+            const headSize = growthSize * 1.0 * camera.zoom; // Ratio 1.0
+            // ... desenha ...
+            // Para não duplicar muito código, vou assumir que o passo dinâmico é visualmente aceitável
+            // e adicionar renderização explícita do segmento 0 APENAS SE step > 1
+            if (step > 1) {
+                const waveOffsetHead = Math.sin(this.wavePhase + 0) * 2 * camera.zoom;
+                // ... (recriando contexto mínimo para cabeça base)
+                // Simplificação: O loop acima desenha "do fundo para a frente".
+                // Se eu desenhar o 0 aqui, ele fica por cima de tudo (correto para cabeça).
+                // Vou incluir o desenho do segmento 0 aqui.
+
+                // Copia da lógica de desenho apenas para index 0
+                const offsetX = Math.cos(headBase.angle + Math.PI / 2) * waveOffsetHead;
+                const offsetY = Math.sin(headBase.angle + Math.PI / 2) * waveOffsetHead;
+
+                const grad = this.createSegmentGradient(ctx, headScreenPos.x + offsetX, headScreenPos.y + offsetY, headSize, 0);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(headScreenPos.x + offsetX, headScreenPos.y + offsetY, headSize, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
         }
 
         // Renderizar cabeça (olhos)
