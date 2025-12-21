@@ -59,7 +59,7 @@ const CONFIG = {
     // Renderização - TEMA DE NATAL 🎅❄️
     GRID_SIZE: 50,
     GRID_COLOR: 'rgba(255, 255, 255, 0.1)', // Grid branco suave (neve)
-    BACKGROUND_COLOR: '#1a2332', // Azul escuro noturno (céu de Natal)
+    BACKGROUND_COLOR: '#0b1015', // Fundo bem escuro estilo Slither.io
 
     // Tema de Natal
     CHRISTMAS_THEME: {

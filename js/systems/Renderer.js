@@ -48,38 +48,49 @@ class Renderer {
 
     renderGrid(camera) {
         const bounds = camera.getVisibleBounds();
-        const gridSize = CONFIG.GRID_SIZE;
+        const hexSize = 50; // Tamanho do hexágono
+        const hexHeight = hexSize * 2;
+        const hexWidth = Math.sqrt(3) * hexSize;
+        const vertDist = hexHeight * 0.75;
 
-        // Calcular linhas visíveis
-        const startX = Math.floor(bounds.left / gridSize) * gridSize;
-        const startY = Math.floor(bounds.top / gridSize) * gridSize;
-        const endX = Math.ceil(bounds.right / gridSize) * gridSize;
-        const endY = Math.ceil(bounds.bottom / gridSize) * gridSize;
+        // Calcular índices visíveis
+        const startI = Math.floor(bounds.left / hexWidth) - 1;
+        const endI = Math.ceil(bounds.right / hexWidth) + 1;
+        const startJ = Math.floor(bounds.top / vertDist) - 1;
+        const endJ = Math.ceil(bounds.bottom / vertDist) + 1;
 
         this.ctx.save();
-        this.ctx.strokeStyle = CONFIG.GRID_COLOR;
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = 2 * camera.zoom;
 
-        // Linhas verticais
-        for (let x = startX; x <= endX; x += gridSize) {
-            const screenStart = camera.worldToScreen(x, startY);
-            const screenEnd = camera.worldToScreen(x, endY);
+        for (let j = startJ; j <= endJ; j++) {
+            for (let i = startI; i <= endI; i++) {
+                let x = i * hexWidth;
+                let y = j * vertDist;
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(screenStart.x, screenStart.y);
-            this.ctx.lineTo(screenEnd.x, screenEnd.y);
-            this.ctx.stroke();
-        }
+                // Deslocar linhas ímpares
+                if (j % 2 !== 0) {
+                    x += hexWidth / 2;
+                }
 
-        // Linhas horizontais
-        for (let y = startY; y <= endY; y += gridSize) {
-            const screenStart = camera.worldToScreen(startX, y);
-            const screenEnd = camera.worldToScreen(endX, y);
+                const screenPos = camera.worldToScreen(x, y);
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(screenStart.x, screenStart.y);
-            this.ctx.lineTo(screenEnd.x, screenEnd.y);
-            this.ctx.stroke();
+                // Renderizar Hexágono
+                this.ctx.beginPath();
+                for (let k = 0; k < 6; k++) {
+                    const angle = 2 * Math.PI / 6 * (k + 0.5);
+                    const hx = screenPos.x + hexSize * camera.zoom * Math.cos(angle);
+                    const hy = screenPos.y + hexSize * camera.zoom * Math.sin(angle);
+                    if (k === 0) this.ctx.moveTo(hx, hy);
+                    else this.ctx.lineTo(hx, hy);
+                }
+                this.ctx.closePath();
+
+                // Estilo Slither.io (Fundo escuro, borda leve)
+                this.ctx.strokeStyle = '#232d36'; // Borda hexágono
+                this.ctx.fillStyle = '#161c22';   // Fundo hexágono
+                this.ctx.fill();
+                this.ctx.stroke();
+            }
         }
 
         this.ctx.restore();
