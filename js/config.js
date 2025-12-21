@@ -6,20 +6,20 @@ const CONFIG = {
     ARENA_BORDER_WIDTH: 20,
 
     // Snake
-    SNAKE_INITIAL_LENGTH: 10,
-    SNAKE_SEGMENT_SIZE: 7, // Reduzido de 10 para 7 (mais fino)
-    SNAKE_SEGMENT_SPACING: 6, // Reduzido de 8 para 6
-    SNAKE_BASE_SPEED: 200, // Aumentado de 180 para 200 (mais rápido)
+    SNAKE_INITIAL_LENGTH: 30, // Aumentado para compensar o menor espaçamento
+    SNAKE_SEGMENT_SIZE: 7, // Mantido
+    SNAKE_SEGMENT_SPACING: 1, // Reduzido drasticamente para ficar "lisa" (quase contínua)
+    SNAKE_BASE_SPEED: 200,
     SNAKE_BOOST_MULTIPLIER: 2,
     SNAKE_BOOST_COST_PER_SECOND: 0.5,
-    SNAKE_MIN_LENGTH_TO_BOOST: 15,
-    SNAKE_TURN_SPEED: 0.1, // Aumentado de 0.08 para 0.1 (mais ágil)
+    SNAKE_MIN_LENGTH_TO_BOOST: 50, // Aumentado pois a cobra terá mais segmentos agora
+    SNAKE_TURN_SPEED: 0.1,
 
     // Food
-    FOOD_SIZE: 6, // Reduzido de 8 para 6
+    FOOD_SIZE: 6,
     FOOD_VALUE: 1,
-    FOOD_SPAWN_RATE: 5, // Aumentado de 2 para 5 por segundo
-    FOOD_MIN_COUNT: 200, // Aumentado de 80 para 200
+    FOOD_SPAWN_RATE: 20, // Aumentado drasticamente (chuva de comida)
+    FOOD_MIN_COUNT: 500, // Mapa cheio de comida
     FOOD_DESPAWN_TIME: Infinity, // Comida nunca expira
 
     // Food Especial

@@ -173,10 +173,12 @@ class Snake {
             // Calcular tamanho do segmento (maior na cabeça)
             const sizeRatio = 0.7 + (i / this.segments.length) * 0.3;
 
-            // Crescimento baseado no comprimento total (mesma lógica do getHeadRadius)
+            // Crescimento baseado no comprimento total
+            // Como espaçamento diminuiu de 6 para 1, teremos 6x mais segmentos.
+            // Ajustando fator de crescimento para não ficar gigante instantaneamente, mas crescer sempre.
             const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-            const growthFactor = Math.floor(this.segments.length / 10) * 1;
-            const maxGrowth = 8;
+            const growthFactor = Math.floor(this.segments.length / 50) * 1;
+            const maxGrowth = 100; // Aumentado para permitir cobras muito gordas
             const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
 
             const segmentSize = growthSize * sizeRatio * camera.zoom;
@@ -186,12 +188,12 @@ class Snake {
             const offsetX = Math.cos(segment.angle + Math.PI / 2) * waveOffset;
             const offsetY = Math.sin(segment.angle + Math.PI / 2) * waveOffset;
 
-            // Desenhar brilho
+            // Desenhar brilho (reduzido)
             if (this.isBoosting) {
-                ctx.shadowBlur = 25 * camera.zoom;
+                ctx.shadowBlur = 10 * camera.zoom; // Reduzido de 25
                 ctx.shadowColor = this.skin.colors[0];
             } else {
-                ctx.shadowBlur = 15 * camera.zoom;
+                ctx.shadowBlur = 5 * camera.zoom; // Reduzido de 15
                 ctx.shadowColor = this.skin.colors[0];
             }
 
@@ -861,10 +863,9 @@ class Snake {
 
     getHeadRadius() {
         // Tamanho base + crescimento baseado no comprimento
-        // A cada 10 segmentos, aumenta 1 pixel no raio
         const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-        const growthFactor = Math.floor(this.segments.length / 10) * 1;
-        const maxGrowth = 8; // Máximo de 8 pixels adicionais
+        const growthFactor = Math.floor(this.segments.length / 50) * 1;
+        const maxGrowth = 100;
         return baseSize + Math.min(growthFactor, maxGrowth);
     }
 
