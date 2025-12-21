@@ -6,9 +6,9 @@ const CONFIG = {
     ARENA_BORDER_WIDTH: 20,
 
     // Snake
-    SNAKE_INITIAL_LENGTH: 15, // Reduzido (espaçamento maior = cobra ocupa mesmo espaço com menos segmentos)
+    SNAKE_INITIAL_LENGTH: 15,
     SNAKE_SEGMENT_SIZE: 7,
-    SNAKE_SEGMENT_SPACING: 3, // Aumentado de 1 para 3 (otimização de performance, ainda visualmente "lisa")
+    SNAKE_SEGMENT_SPACING: 4, // Aumentado para 4 (mais "esticada")
     SNAKE_BASE_SPEED: 200,
     SNAKE_BOOST_MULTIPLIER: 2,
     SNAKE_BOOST_COST_PER_SECOND: 0.5,
