@@ -389,6 +389,181 @@ class Snake {
         ctx.restore();
     }
 
+    // --- NOVOS MÉTODOS DE ANIMAIS ---
+
+    drawBearHead(ctx, size) {
+        // Orelhas redondas
+        ctx.fillStyle = this.skin.colors[1] || this.skin.colors[0];
+        ctx.beginPath();
+        const earSize = size * 0.35;
+        // Orelha esquerda
+        ctx.arc(size * 0.4, -size * 0.6, earSize, 0, Math.PI * 2);
+        // Orelha direita
+        ctx.arc(size * 0.4, size * 0.6, earSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Cabeça base (já desenhada ou podemos reforçar)
+        // O corpo da cobra já desenha a cabeça, aqui focamos nos detalhes da cara
+
+        // Focinho
+        ctx.fillStyle = '#D2B48C'; // Tan
+        ctx.beginPath();
+        ctx.ellipse(size * 0.6, 0, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Nariz
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(size * 0.8, 0, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olhos
+        this.drawStandardFace(ctx, size, '#000000');
+    }
+
+    drawLionHead(ctx, size) {
+        // Juba
+        ctx.fillStyle = '#8B4513'; // SaddleBrown
+        ctx.beginPath();
+        // Juba ao redor da cabeça
+        ctx.arc(0, 0, size * 1.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Orelhas (escondidas na juba, mas podemos destacar)
+
+        // Rosto (cobre o centro da juba)
+        ctx.fillStyle = this.skin.colors[0]; // Dourado
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Focinho
+        ctx.fillStyle = '#F4A460'; // SandyBrown
+        ctx.beginPath();
+        ctx.ellipse(size * 0.5, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Nariz
+        ctx.fillStyle = '#000000'; // Rosa escuro ou preto
+        ctx.beginPath();
+        ctx.moveTo(size * 0.7, -size * 0.1);
+        ctx.lineTo(size * 0.85, 0);
+        ctx.lineTo(size * 0.7, size * 0.1);
+        ctx.fill();
+
+        // Olhos felinos
+        this.drawCatFace(ctx, size, '#FFFF00'); // Reutiliza olhos de gato mas amarelos
+    }
+
+    drawCowHead(ctx, size) {
+        // Chifres
+        ctx.fillStyle = '#D3D3D3'; // Cinza claro
+        ctx.beginPath();
+        // Chifre esquerdo
+        ctx.moveTo(size * 0.2, -size * 0.5);
+        ctx.quadraticCurveTo(size * 0.4, -size * 1.0, size * 0.8, -size * 0.8);
+        ctx.lineTo(size * 0.6, -size * 0.5);
+        ctx.fill();
+        // Chifre direito
+        ctx.beginPath();
+        ctx.moveTo(size * 0.2, size * 0.5);
+        ctx.quadraticCurveTo(size * 0.4, size * 1.0, size * 0.8, size * 0.8);
+        ctx.lineTo(size * 0.6, size * 0.5);
+        ctx.fill();
+
+        // Orelhas de vaca (caídas)
+        ctx.fillStyle = this.skin.colors[1] || '#000000';
+        ctx.beginPath();
+        ctx.ellipse(size * 0.2, -size * 0.7, size * 0.3, size * 0.15, -Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(size * 0.2, size * 0.7, size * 0.3, size * 0.15, Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Focinho largo
+        ctx.fillStyle = '#FFB6C1'; // Rosa claro
+        ctx.beginPath();
+        ctx.ellipse(size * 0.6, 0, size * 0.4, size * 0.35, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Narinas
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(size * 0.8, -size * 0.15, size * 0.08, 0, Math.PI * 2);
+        ctx.arc(size * 0.8, size * 0.15, size * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olhos
+        this.drawStandardFace(ctx, size, '#000000');
+    }
+
+    drawFoxHead(ctx, size) {
+        // Orelhas grandes e pontudas
+        ctx.fillStyle = this.skin.colors[0];
+        ctx.beginPath();
+        // Esquerda
+        ctx.moveTo(size * 0.1, -size * 0.4);
+        ctx.lineTo(size * 0.3, -size * 1.2);
+        ctx.lineTo(size * 0.6, -size * 0.3);
+        ctx.fill();
+        // Direita
+        ctx.moveTo(size * 0.1, size * 0.4);
+        ctx.lineTo(size * 0.3, size * 1.2);
+        ctx.lineTo(size * 0.6, size * 0.3);
+        ctx.fill();
+
+        // Detalhe branco nas bochechas/focinho
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.moveTo(size * 0.2, -size * 0.5);
+        ctx.quadraticCurveTo(size * 0.8, -size * 0.3, size * 1.1, 0);
+        ctx.quadraticCurveTo(size * 0.8, size * 0.3, size * 0.2, size * 0.5);
+        ctx.fill();
+
+        // Nariz pontudo preto
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(size * 1.0, 0, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olhos espertos
+        this.drawStandardFace(ctx, size * 0.9, '#000000');
+    }
+
+    drawRabbitHead(ctx, size) {
+        // Orelhas longas
+        ctx.fillStyle = this.skin.colors[0];
+        const earLength = size * 1.5;
+        const earWidth = size * 0.3;
+
+        ctx.beginPath();
+        // Esquerda
+        ctx.ellipse(size * 0, -size * 0.8, earLength, earWidth, -Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Direita
+        ctx.beginPath();
+        ctx.ellipse(size * 0, size * 0.8, earLength, earWidth, Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Interior das orelhas
+        ctx.fillStyle = '#FFC0CB';
+        ctx.beginPath();
+        ctx.ellipse(size * 0, -size * 0.8, earLength * 0.7, earWidth * 0.6, -Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(size * 0, size * 0.8, earLength * 0.7, earWidth * 0.6, Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Narizinho
+        ctx.fillStyle = '#FF69B4';
+        ctx.beginPath();
+        ctx.arc(size * 0.9, 0, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olhos
+        this.drawCuteFace(ctx, size, '#000000');
+    }
+
     drawStandardFace(ctx, size, color) {
         const eyeOffset = size * 0.4;
         const eyeSize = size * 0.25;
