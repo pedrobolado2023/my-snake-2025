@@ -253,7 +253,7 @@ class Snake {
         }
 
         // Renderizar Segmentos 3D
-        const step = Math.max(1, Math.floor((growthSize * 0.5) / CONFIG.SNAKE_SEGMENT_SPACING));
+        // const step = Math.max(1, Math.floor((growthSize * 0.5) / CONFIG.SNAKE_SEGMENT_SPACING)); (Usando o step otimizado acima)
 
         for (let i = this.segments.length - 1; i >= 0; i -= step) {
             const segment = this.segments[i];
