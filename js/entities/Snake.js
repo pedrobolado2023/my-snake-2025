@@ -212,6 +212,20 @@ class Snake {
         const maxGrowth = 80; // Limite menor para não ficar muito gorda
         const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
 
+        // OTIMIZAÇÃO DE RENDERIZAÇÃO ⚡
+        // Calcular "step" (pulo) baseado no zoom e comprimento
+        // Se a cobra for muito longa, aumentamos o step para desenhar menos círculos
+        // Isso evita desenhar 5000 segmentos num loop
+        let step = Math.max(1, Math.floor((growthSize * 0.5) / CONFIG.SNAKE_SEGMENT_SPACING));
+
+        // Se estiver muito longe (zoom baixo) ou cobra muito grande, pular mais
+        if (camera.zoom < 0.5 || this.segments.length > 500) {
+            step = Math.ceil(step * 1.5);
+        }
+        if (this.segments.length > 1000) {
+            step = Math.ceil(step * 2); // Desenha metade dos segmentos
+        }
+
         // Renderizar brilho (glow) intenso se for player ou estiver perto
         if (this.isPlayer || camera.zoom > 0.6) {
             // Glow reduzido para menos ofuscação
