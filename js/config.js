@@ -50,16 +50,16 @@ const CONFIG = {
     // Bots
     BOT_COUNT_DESKTOP: 0, // Remover bots (0)
 
-    // Câmera - Zoom aumentado para cobrinha mais próxima
+    // Câmera - Zoom aumentado para cobrinha mais próxima (estilo Slither)
     CAMERA_LERP_FACTOR: 0.1,
-    ZOOM_MIN: 0.8, // Aumentado de 0.6 para 0.8 (limite de afastamento menor)
-    ZOOM_MAX: 1.6, // Aumentado de 1.3 para 1.6 (mais próximo inicialmente)
-    ZOOM_FACTOR: 0.0002, // Reduzido de 0.0003 (zoom mais gradual)
+    ZOOM_MIN: 0.9, // Aumentado (mais perto)
+    ZOOM_MAX: 1.8, // Aumentado (visão macro)
+    ZOOM_FACTOR: 0.0003,
 
     // Renderização - TEMA DE NATAL 🎅❄️
     GRID_SIZE: 50,
-    GRID_COLOR: 'rgba(255, 255, 255, 0.1)', // Grid branco suave (neve)
-    BACKGROUND_COLOR: '#0b1015', // Fundo bem escuro estilo Slither.io
+    GRID_COLOR: 'rgba(255, 255, 255, 0.1)',
+    BACKGROUND_COLOR: '#0b1015',
 
     // Tema de Natal
     CHRISTMAS_THEME: {
@@ -77,7 +77,7 @@ const CONFIG = {
         NEON_GREEN: '#06ffa5',
         NEON_YELLOW: '#ffea00',
         NEON_ORANGE: '#ff6b35',
-        BORDER: '#DC143C', // Vermelho Natal para a borda
+        BORDER: '#354350', // Borda cinza azulada escura (discreta)
     },
 
     // Categorias de Skins
