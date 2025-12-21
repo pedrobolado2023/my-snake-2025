@@ -63,7 +63,10 @@ class Snake {
     }
 
     grow(amount = 1) {
-        this.targetLength += amount;
+        // Otimização: Crescer 10x mais devagar em comprimento do que em pontos
+        // Antes: 1 ponto = 1 segmento
+        // Agora: 10 pontos = 1 segmento
+        this.targetLength += amount * 0.1;
         this.foodEaten += amount;
         this.score += amount * 10;
     }
