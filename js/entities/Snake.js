@@ -257,36 +257,282 @@ class Snake {
 
         const screenPos = camera.worldToScreen(head.x, head.y);
         const headSize = CONFIG.SNAKE_SEGMENT_SIZE * camera.zoom;
+        const angle = head.angle;
 
-        // Desenhar olhos
-        const eyeDistance = headSize * 0.5;
-        const eyeSize = headSize * 0.25;
-        const eyeAngle = head.angle;
+        // Configuração da cara
+        const faceConfig = this.skin.face || { type: 'standard', eyeColor: '#ffffff' };
 
-        // Olho esquerdo
-        const leftEyeX = screenPos.x + Math.cos(eyeAngle + Math.PI / 4) * eyeDistance;
-        const leftEyeY = screenPos.y + Math.sin(eyeAngle + Math.PI / 4) * eyeDistance;
+        ctx.save();
+        ctx.translate(screenPos.x, screenPos.y);
+        ctx.rotate(angle);
 
-        // Olho direito
-        const rightEyeX = screenPos.x + Math.cos(eyeAngle - Math.PI / 4) * eyeDistance;
-        const rightEyeY = screenPos.y + Math.sin(eyeAngle - Math.PI / 4) * eyeDistance;
+        // Desenhar baseado no tipo
+        switch (faceConfig.type) {
+            case 'cute':
+                this.drawCuteFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'angry':
+                this.drawAngryFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'happy':
+                this.drawHappyFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'cyclops':
+                this.drawCyclopsFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'cat':
+                this.drawCatFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'panda':
+                this.drawPandaFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'cool':
+                this.drawCoolFace(ctx, headSize);
+                break;
+            case 'alien':
+                this.drawAlienFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            default: // standard
+                this.drawStandardFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+        }
 
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 5 * camera.zoom;
-        ctx.shadowColor = '#ffffff';
+        ctx.restore();
+    }
 
-        // Desenhar olhos
+    drawStandardFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.25;
+
+        // Olhos
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
         ctx.beginPath();
-        ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
-        ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2); // Direito (visão top-down)
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);  // Esquerdo
         ctx.fill();
 
         // Pupilas
         ctx.fillStyle = '#000000';
         ctx.shadowBlur = 0;
         ctx.beginPath();
-        ctx.arc(leftEyeX, leftEyeY, eyeSize * 0.6, 0, Math.PI * 2);
-        ctx.arc(rightEyeX, rightEyeY, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawCuteFace(ctx, size, color) {
+        const eyeOffset = size * 0.35;
+        const eyeSize = size * 0.35; // Olhos maiores
+
+        // Olhos
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pupilas grandes
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.7, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Brilho nos olhos
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(eyeOffset + eyeSize / 2, -eyeOffset / 2 - eyeSize / 4, eyeSize * 0.2, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + eyeSize / 2, eyeOffset / 2 - eyeSize / 4, eyeSize * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawAngryFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.25;
+
+        // Olhos
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sobrancelhas "bravas" (corte nos olhos)
+        ctx.fillStyle = this.skin.colors[0]; // Cor da pele para cobrir
+        ctx.beginPath();
+        // Topo olho esquerdo
+        ctx.moveTo(eyeOffset - eyeSize, -eyeOffset / 2 - eyeSize);
+        ctx.lineTo(eyeOffset + eyeSize, -eyeOffset / 2);
+        ctx.lineTo(eyeOffset - eyeSize, -eyeOffset / 2);
+        // Topo olho direito
+        ctx.moveTo(eyeOffset - eyeSize, eyeOffset / 2 - eyeSize);
+        ctx.lineTo(eyeOffset + eyeSize, eyeOffset / 2);
+        ctx.lineTo(eyeOffset - eyeSize, eyeOffset / 2);
+        ctx.fill();
+
+        // Pupilas pequenas e focadas
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.4, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawHappyFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.25;
+
+        // Olhos fechados felizes (arco)
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        // Esquerdo
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, Math.PI * 0.2, Math.PI * 0.8);
+        ctx.stroke();
+
+        ctx.beginPath();
+        // Direito
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, -Math.PI * 0.8, -Math.PI * 0.2); // Espelhado? Não, apenas arco
+        // Corrigindo arco feliz (sorrindo)
+        // Na verdade olhos '^^' são dois arcos para cima em relação à rotação
+        // Vamos fazer olhos abertos mas com expressão feliz
+
+        // Reset path e fazer olhos normais mas brilhantes
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Boca feliz? (Arco simples abaixo dos olhos?)
+        // Difícil posicionar sem parecer estranho de cima. Vamos focar nos olhos.
+        // Pupilas normais
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.arc(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawCyclopsFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.5; // Olhão
+
+        // Olho único
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        ctx.arc(eyeOffset, 0, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pupila
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(eyeOffset + 5, 0, eyeSize * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawCatFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.3;
+
+        // Olhos
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pupilas (fenda vertical)
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        // Esquerdo
+        ctx.ellipse(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.8, eyeSize * 0.2, 0, 0, Math.PI * 2);
+        // Direito
+        ctx.ellipse(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.8, eyeSize * 0.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawPandaFace(ctx, size, color) {
+        const eyeOffset = size * 0.4;
+        const eyeSize = size * 0.25;
+
+        // Manchas pretas
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.ellipse(eyeOffset, -eyeOffset / 2, eyeSize * 1.5, eyeSize * 1.2, Math.PI / 4, 0, Math.PI * 2);
+        ctx.ellipse(eyeOffset, eyeOffset / 2, eyeSize * 1.5, eyeSize * 1.2, -Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olhos brancos
+        this.drawStandardFace(ctx, size, '#ffffff');
+    }
+
+    drawCoolFace(ctx, size) {
+        const eyeOffset = size * 0.4;
+        const width = size * 0.4;
+        const height = size * 0.6;
+
+        // Óculos escuros
+        ctx.fillStyle = '#000000';
+        ctx.shadowBlur = 2;
+        ctx.shadowColor = '#000000';
+
+        ctx.beginPath();
+        // Lente esquerda
+        ctx.rect(eyeOffset - width / 2, -height / 2 - 2, width, height / 2);
+        // Lente direita
+        ctx.rect(eyeOffset - width / 2, 2, width, height / 2);
+        // Haste central
+        ctx.rect(eyeOffset - width / 2, -2, width / 2, 4);
+        ctx.fill();
+
+        // Brilho no óculos
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(eyeOffset + width / 2, -height / 2);
+        ctx.lineTo(eyeOffset - width / 2, -height / 4);
+        ctx.lineTo(eyeOffset + width / 2, 0);
+        ctx.fill();
+    }
+
+    drawAlienFace(ctx, size, color) {
+        const eyeOffset = size * 0.3;
+        const eyeSize = size * 0.4;
+
+        // Olhos grandes e inclinados
+        ctx.fillStyle = color; // Preto ou escuro para alien? Ou cor brilhante? Config diz ciano.
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = color;
+
+        ctx.beginPath();
+        // Esquerdo
+        ctx.ellipse(eyeOffset, -eyeOffset / 2, eyeSize, eyeSize * 0.6, -Math.PI / 6, 0, Math.PI * 2);
+        // Direito
+        ctx.ellipse(eyeOffset, eyeOffset / 2, eyeSize, eyeSize * 0.6, Math.PI / 6, 0, Math.PI * 2);
         ctx.fill();
     }
 
