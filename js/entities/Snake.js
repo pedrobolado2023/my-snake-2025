@@ -209,7 +209,8 @@ class Snake {
 
         // Renderizar brilho (glow) intenso se for player ou estiver perto
         if (this.isPlayer || camera.zoom > 0.6) {
-            const glowBlur = this.isBoosting ? 30 * camera.zoom : 15 * camera.zoom;
+            // Glow reduzido para menos ofuscação
+            const glowBlur = this.isBoosting ? 20 * camera.zoom : 8 * camera.zoom;
             ctx.shadowBlur = glowBlur;
             ctx.shadowColor = skinColors[0];
 

@@ -450,6 +450,11 @@ class Game {
                 snake.grow(food.value);
                 this.createParticles(food.x, food.y, food.color, 'eat', CONFIG.PARTICLE_COUNT_ON_EAT);
 
+                // Respawn instantâneo da comida (apenas se for comida normal)
+                if (food.type === 'normal') {
+                    this.spawnFood(1);
+                }
+
                 // Incrementar kills se for comida de cobra morta
                 if (food.type === 'dead_snake' && snake.isPlayer) {
                     // (kills são incrementados quando a cobra morre)

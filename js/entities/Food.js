@@ -143,13 +143,13 @@ class Food {
 
         // Desenhar brilho de fundo
         if (this.type === 'giant') {
-            ctx.shadowBlur = 30 * camera.zoom;
+            ctx.shadowBlur = 20 * camera.zoom; // Reduzido (era 30)
             ctx.shadowColor = this.color;
         } else if (this.isBeingAttracted) {
-            ctx.shadowBlur = 20 * camera.zoom;
+            ctx.shadowBlur = 10 * camera.zoom; // Reduzido (era 20)
             ctx.shadowColor = '#00ffcc';
         } else {
-            ctx.shadowBlur = 15 * camera.zoom;
+            ctx.shadowBlur = 6 * camera.zoom; // Reduzido (era 15)
             ctx.shadowColor = this.color;
         }
 
