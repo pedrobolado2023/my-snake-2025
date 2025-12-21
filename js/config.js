@@ -52,8 +52,8 @@ const CONFIG = {
 
     // Câmera - Zoom aumentado para cobrinha mais próxima
     CAMERA_LERP_FACTOR: 0.1,
-    ZOOM_MIN: 0.6, // Limite de zoom out (quanto maior, mais próximo mesmo quando grande)
-    ZOOM_MAX: 1.3, // Zoom inicial (maior = mais próximo)
+    ZOOM_MIN: 0.8, // Aumentado de 0.6 para 0.8 (limite de afastamento menor)
+    ZOOM_MAX: 1.6, // Aumentado de 1.3 para 1.6 (mais próximo inicialmente)
     ZOOM_FACTOR: 0.0002, // Reduzido de 0.0003 (zoom mais gradual)
 
     // Renderização - TEMA DE NATAL 🎅❄️
