@@ -360,11 +360,26 @@ class Snake {
             case 'panda':
                 this.drawPandaFace(ctx, headSize, faceConfig.eyeColor);
                 break;
+            case 'bear': // NOVO
+                this.drawBearHead(ctx, headSize);
+                break;
             case 'cool':
                 this.drawCoolFace(ctx, headSize);
                 break;
             case 'alien':
                 this.drawAlienFace(ctx, headSize, faceConfig.eyeColor);
+                break;
+            case 'lion': // NOVO
+                this.drawLionHead(ctx, headSize);
+                break;
+            case 'cow': // NOVO
+                this.drawCowHead(ctx, headSize);
+                break;
+            case 'fox': // NOVO
+                this.drawFoxHead(ctx, headSize);
+                break;
+            case 'rabbit': // NOVO
+                this.drawRabbitHead(ctx, headSize);
                 break;
             default: // standard
                 this.drawStandardFace(ctx, headSize, faceConfig.eyeColor);
@@ -526,8 +541,29 @@ class Snake {
     }
 
     drawCatFace(ctx, size, color) {
-        const eyeOffset = size * 0.4;
-        const eyeSize = size * 0.3;
+        // Orelhas Pontudas
+        ctx.fillStyle = this.skin.colors[0]; // Cor do corpo
+        ctx.beginPath();
+        ctx.moveTo(size * 0.2, -size * 0.5); ctx.lineTo(size * 0.6, -size * 1.3); ctx.lineTo(size * 0.9, -size * 0.4);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(size * 0.2, size * 0.5); ctx.lineTo(size * 0.6, size * 1.3); ctx.lineTo(size * 0.9, size * 0.4);
+        ctx.fill();
+
+        // Interior Orelhas
+        ctx.fillStyle = '#FFB6C1';
+        ctx.beginPath();
+        ctx.moveTo(size * 0.3, -size * 0.6); ctx.lineTo(size * 0.6, -size * 1.1); ctx.lineTo(size * 0.8, -size * 0.5);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(size * 0.3, size * 0.6); ctx.lineTo(size * 0.6, size * 1.1); ctx.lineTo(size * 0.8, size * 0.5);
+        ctx.fill();
+
+        // Rosto
+        ctx.fillStyle = this.skin.colors[0];
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.fill();
 
         // Olhos
         ctx.fillStyle = color;
@@ -535,19 +571,35 @@ class Snake {
         ctx.shadowColor = color;
 
         ctx.beginPath();
-        ctx.arc(eyeOffset, -eyeOffset / 2, eyeSize, 0, Math.PI * 2);
-        ctx.arc(eyeOffset, eyeOffset / 2, eyeSize, 0, Math.PI * 2);
+        ctx.arc(size * 0.5, -size * 0.35, size * 0.3, 0, Math.PI * 2);
+        ctx.arc(size * 0.5, size * 0.35, size * 0.3, 0, Math.PI * 2);
         ctx.fill();
 
         // Pupilas (fenda vertical)
         ctx.fillStyle = '#000000';
         ctx.shadowBlur = 0;
         ctx.beginPath();
-        // Esquerdo
-        ctx.ellipse(eyeOffset + 2, -eyeOffset / 2, eyeSize * 0.8, eyeSize * 0.2, 0, 0, Math.PI * 2);
-        // Direito
-        ctx.ellipse(eyeOffset + 2, eyeOffset / 2, eyeSize * 0.8, eyeSize * 0.2, 0, 0, Math.PI * 2);
+        ctx.ellipse(size * 0.55, -size * 0.35, size * 0.25, size * 0.08, 0, 0, Math.PI * 2);
+        ctx.ellipse(size * 0.55, size * 0.35, size * 0.25, size * 0.08, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        // Nariz
+        ctx.fillStyle = '#FFB6C1';
+        ctx.beginPath();
+        ctx.moveTo(size * 0.9, -size * 0.15);
+        ctx.lineTo(size * 1.1, 0);
+        ctx.lineTo(size * 0.9, size * 0.15);
+        ctx.fill();
+
+        // Bigodes
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(size * 0.9, -size * 0.1); ctx.lineTo(size * 1.4, -size * 0.4);
+        ctx.moveTo(size * 0.9, size * 0.1); ctx.lineTo(size * 1.4, size * 0.4);
+        ctx.moveTo(size * 0.9, -size * 0.05); ctx.lineTo(size * 1.4, -size * 0.15);
+        ctx.moveTo(size * 0.9, size * 0.05); ctx.lineTo(size * 1.4, size * 0.15);
+        ctx.stroke();
     }
 
     drawPandaFace(ctx, size, color) {

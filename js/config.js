@@ -99,18 +99,18 @@ const CONFIG = {
         { id: 'darkgreen', name: 'Verde Escuro', category: 'BASICO', colors: ['#2d5016', '#4a7c2f'], pattern: 'solid', unlocked: true, face: { type: 'angry', eyeColor: '#ff0000' } },
 
         // Animais - Padrões inspirados em animais
-        { id: 'cow', name: 'Vaca', category: 'ANIMAIS', colors: ['#ffffff', '#000000'], pattern: 'spots', unlocked: false, requirement: 'Jogue 3 dias consecutivos', face: { type: 'standard', eyeColor: '#000000' } },
-        { id: 'rabbit', name: 'Coelho', category: 'ANIMAIS', colors: ['#f5f5f5', '#e0e0e0'], pattern: 'solid', unlocked: false, requirement: 'Alcance 500 pontos', face: { type: 'cute', eyeColor: '#ff69b4' } },
+        { id: 'cow', name: 'Vaca', category: 'ANIMAIS', colors: ['#ffffff', '#000000'], pattern: 'spots', unlocked: false, requirement: 'Jogue 3 dias consecutivos', face: { type: 'cow', eyeColor: '#000000' } },
+        { id: 'rabbit', name: 'Coelho', category: 'ANIMAIS', colors: ['#f5f5f5', '#e0e0e0'], pattern: 'solid', unlocked: false, requirement: 'Alcance 500 pontos', face: { type: 'rabbit', eyeColor: '#ff69b4' } },
         { id: 'cat', name: 'Gato', category: 'ANIMAIS', colors: ['#d4a574', '#c19a6b'], pattern: 'stripes', unlocked: false, requirement: 'Alcance 750 pontos', face: { type: 'cat', eyeColor: '#00ff00' } },
-        { id: 'bear', name: 'Urso', category: 'ANIMAIS', colors: ['#8b4513', '#a0522d'], pattern: 'solid', unlocked: false, requirement: 'Alcance 1000 pontos', face: { type: 'standard', eyeColor: '#ffffff' } },
-        { id: 'fox', name: 'Raposa', category: 'ANIMAIS', colors: ['#ff6347', '#ff7f50'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 1250 pontos', face: { type: 'cute', eyeColor: '#ffffff' } },
+        { id: 'bear', name: 'Urso', category: 'ANIMAIS', colors: ['#8b4513', '#a0522d'], pattern: 'solid', unlocked: false, requirement: 'Alcance 1000 pontos', face: { type: 'bear', eyeColor: '#ffffff' } },
+        { id: 'fox', name: 'Raposa', category: 'ANIMAIS', colors: ['#ff6347', '#ff7f50'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 1250 pontos', face: { type: 'fox', eyeColor: '#ffffff' } },
         { id: 'dragon', name: 'Dragão', category: 'ANIMAIS', colors: ['#9370db', '#ba55d3'], pattern: 'scales', unlocked: false, requirement: 'Alcance 1500 pontos', face: { type: 'angry', eyeColor: '#ffff00' } },
 
         // Especiais - Padrões únicos e complexos
         { id: 'snake', name: 'Cobra', category: 'ESPECIAIS', colors: ['#2d5016', '#4a7c2f', '#6ba547'], pattern: 'scales', unlocked: false, requirement: 'Mate 5 cobras', face: { type: 'angry', eyeColor: '#ff0000' } },
         { id: 'rainbow', name: 'Arco-íris', category: 'ESPECIAIS', colors: ['#ff3366', '#ffea00', '#06ffa5', '#00b4d8', '#9d4edd'], pattern: 'rainbow', unlocked: false, requirement: 'Alcance 2000 pontos', face: { type: 'happy', eyeColor: '#ffffff' } },
-        { id: 'lion', name: 'Leão', category: 'ESPECIAIS', colors: ['#daa520', '#b8860b'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 2500 pontos', face: { type: 'angry', eyeColor: '#000000' } },
-        { id: 'tiger', name: 'Tigre', category: 'ESPECIAIS', colors: ['#ff8c00', '#000000'], pattern: 'stripes', unlocked: false, requirement: 'Alcance 3000 pontos', face: { type: 'angry', eyeColor: '#ffff00' } },
+        { id: 'lion', name: 'Leão', category: 'ESPECIAIS', colors: ['#daa520', '#b8860b'], pattern: 'gradient', unlocked: false, requirement: 'Alcance 2500 pontos', face: { type: 'lion', eyeColor: '#000000' } },
+        { id: 'tiger', name: 'Tigre', category: 'ESPECIAIS', colors: ['#ff8c00', '#000000'], pattern: 'stripes', unlocked: false, requirement: 'Alcance 3000 pontos', face: { type: 'cat', eyeColor: '#ffff00' } },
         { id: 'panda', name: 'Panda', category: 'ESPECIAIS', colors: ['#ffffff', '#000000'], pattern: 'panda', unlocked: false, requirement: 'Alcance 3500 pontos', face: { type: 'panda', eyeColor: '#000000' } },
 
         // Premium - Skins raras e especiais
