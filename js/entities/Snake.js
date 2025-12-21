@@ -199,8 +199,8 @@ class Snake {
         // Calcular LOD e tamanhos fora do loop
         // Calcular LOD e tamanhos fora do loop
         const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-        // Crescimento mais lento na largura: 1px a cada 20 segmentos (antes 10)
-        const growthFactor = Math.floor(this.segments.length / 20) * 0.8;
+        // Crescimento linear suave (sem Math.floor) para evitar "piscar" ao crescer
+        const growthFactor = (this.segments.length / 20) * 0.8;
         const maxGrowth = 80; // Limite menor para não ficar muito gorda
         const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
 
