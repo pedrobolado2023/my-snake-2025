@@ -233,19 +233,93 @@ class Snake {
     }
 
     createSegmentGradient(ctx, x, y, radius, index) {
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        // Padrão base
+        const pattern = this.skin.pattern || 'solid';
+        const colors = this.skin.colors;
+        let gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
 
-        if (this.skin.colors.length === 1) {
-            gradient.addColorStop(0, this.skin.colors[0]);
-            gradient.addColorStop(1, this.skin.colors[0]);
-        } else {
-            // Alternar cores ao longo do corpo
-            const colorIndex = Math.floor((index / 3) % this.skin.colors.length);
-            const color1 = this.skin.colors[colorIndex];
-            const color2 = this.skin.colors[(colorIndex + 1) % this.skin.colors.length];
+        switch (pattern) {
+            case 'solid':
+            case 'gradient':
+                if (colors.length === 1) {
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[0]);
+                } else {
+                    // Gradiente suave entre as cores
+                    const colorIndex = Math.floor((index / 5) % colors.length);
+                    const nextColorIndex = (colorIndex + 1) % colors.length;
+                    gradient.addColorStop(0, colors[colorIndex]);
+                    gradient.addColorStop(1, colors[nextColorIndex]);
+                }
+                break;
 
-            gradient.addColorStop(0, color1);
-            gradient.addColorStop(1, color2);
+            case 'spots': // Vaca (Manchas)
+                // Usar índice para criar "manchas" aleatórias mas consistentes
+                // Se (index % 4 === 0) ou algo assim, muda a cor
+                const isSpot = (index % 4 === 0) || (index % 7 === 0);
+                // Vaca: Cores[0] = branco, Cores[1] = preto
+                if (isSpot && colors.length > 1) {
+                    gradient.addColorStop(0, colors[1]); // Preto
+                    gradient.addColorStop(1, colors[1]);
+                } else {
+                    gradient.addColorStop(0, colors[0]); // Branco
+                    gradient.addColorStop(1, colors[0]);
+                }
+                break;
+
+            case 'stripes': // Tigre / Gato (Listras)
+                // Alternar a cada X segmentos
+                const stripeWidth = 3;
+                const isStripe = Math.floor(index / stripeWidth) % 2 === 0;
+
+                if (isStripe && colors.length > 1) {
+                    gradient.addColorStop(0, colors[1]);
+                    gradient.addColorStop(1, colors[1]);
+                } else {
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[0]);
+                }
+                break;
+
+            case 'panda': // Panda (Blocos)
+                // Cabeça branca, corpo preto/branco alternado em blocos grandes
+                // O segmento 0 é a cabeça (tratado no renderHead, mas aqui é corpo)
+                const blockSize = 5;
+                const isBlock = Math.floor(index / blockSize) % 2 === 0;
+
+                if (isBlock && colors.length > 1) {
+                    gradient.addColorStop(0, colors[1]); // Preto
+                    gradient.addColorStop(1, colors[1]);
+                } else {
+                    gradient.addColorStop(0, colors[0]); // Branco
+                    gradient.addColorStop(1, colors[0]);
+                }
+                break;
+
+            case 'scales': // Dragão / Cobra
+            case 'rainbow':
+                // Cores alternando rapidamente
+                const scaleIndex = index % colors.length;
+                gradient.addColorStop(0, colors[scaleIndex]);
+                // Adicionar um pouco de brilho para parecer escama
+                gradient.addColorStop(1, Utils.adjustColor(colors[scaleIndex], -20));
+                break;
+
+            case 'fire':
+            case 'ice':
+            case 'toxic':
+            case 'galaxy':
+            case 'neon':
+                // Padrões animados ou complexos
+                // Para simplificar: usar as cores disponíveis em ciclo rápido
+                const complexIndex = index % colors.length;
+                gradient.addColorStop(0, colors[complexIndex]);
+                gradient.addColorStop(1, colors[(complexIndex + 1) % colors.length]);
+                break;
+
+            default:
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(1, colors[0]);
         }
 
         return gradient;
