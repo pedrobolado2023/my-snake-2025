@@ -63,9 +63,9 @@ const CONFIG = {
 
     // Tema de Natal
     CHRISTMAS_THEME: {
-        ENABLED: true,
-        SNOW_ENABLED: true,
-        SANTA_ENABLED: true,
+        ENABLED: false,
+        SNOW_ENABLED: false,
+        SANTA_ENABLED: false,
     },
 
     // Cores Neon (mantidas para as cobras)

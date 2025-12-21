@@ -44,15 +44,39 @@ class Food {
                 break;
 
             default: // normal - comida temática
-                this.size = CONFIG.FOOD_SIZE;
-                this.value = CONFIG.FOOD_VALUE;
-                this.color = this.generateRandomColor();
-                this.lifetime = CONFIG.FOOD_DESPAWN_TIME;
+                // Lógica de valores dinâmicos (1 a 100 pontos)
+                const rand = Math.random();
+                let points = 1;
+                let sizeMult = 1;
 
-                // Escolher tipo de comida aleatório
-                const foodType = Utils.randomChoice(foodTypes);
-                this.emoji = foodType.emoji;
-                this.foodName = foodType.name;
+                if (rand < 0.01) { // 1% de chance de comida LEENDÁRIA (100 pts)
+                    points = 100;
+                    sizeMult = 2.5;
+                    this.emoji = '💎'; // Diamante
+                    this.color = '#00ffff'; // Ciano neon
+                } else if (rand < 0.05) { // 4% de chance de comida ÉPICA (50 pts)
+                    points = 50;
+                    sizeMult = 2.0;
+                    this.emoji = '👑'; // Coroa
+                    this.color = '#ff00ff'; // Magenta neon
+                } else if (rand < 0.15) { // 10% de chance de comida RARA (20 pts)
+                    points = 20;
+                    sizeMult = 1.5;
+                    this.emoji = '🌟'; // Estrela
+                    this.color = '#ffff00'; // Amarelo
+                } else {
+                    // Comida normal (1 a 5 pts)
+                    points = Utils.randomInt(1, 5);
+                    sizeMult = 1.0;
+                    const foodType = Utils.randomChoice(foodTypes);
+                    this.emoji = foodType.emoji;
+                    this.color = this.generateRandomColor();
+                }
+
+                this.size = CONFIG.FOOD_SIZE * sizeMult;
+                this.value = points;
+                this.lifetime = CONFIG.FOOD_DESPAWN_TIME;
+                this.foodName = 'food';
         }
 
         // Propriedades de atração magnética
