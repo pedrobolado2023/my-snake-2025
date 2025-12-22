@@ -164,30 +164,54 @@ class SkinSelectionManager {
         return card;
     }
 
-    // Renderizar a skin com detalhes no canvas do menu
+    // Renderizar a skin como um ÍCONE DE APP (Quadrado arredondado preenchido)
     renderSkinOnCanvas(canvas, skin) {
-        const ctx = canvas.getContext('2d');
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const size = 35; // Tamanho da cabeça no card
+        // Aumentar resolução interna para nitidez
+        const resolution = 2;
+        const width = canvas.clientWidth || 100;
+        const height = canvas.clientHeight || 100;
 
-        // Criar uma cobra temporária para usar os métodos de desenho
-        // (Não adicionamos ao jogo, é apenas para acessar a lógica de renderização)
+        canvas.width = width * resolution;
+        canvas.height = height * resolution;
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(resolution, resolution);
+
+        const cx = width / 2;
+        const cy = height / 2;
+        const size = width; // Ocupa largura total
+
+        // Criar uma cobra temporária para usar os métodos de desenho de rosto
         const dummySnake = new Snake('preview', 'Preview', 0, 0, skin);
 
-        ctx.save();
-        ctx.translate(cx, cy);
+        // Limpar
+        ctx.clearRect(0, 0, width, height);
 
-        // Rotacionar para ficar apontando para cima/diagonal para melhor visualização
-        ctx.rotate(-Math.PI / 4);
+        // 1. DESENHAR FUNDO (Base da skin preenchendo o card)
+        // Usar retângulo arredondado que preenche tudo
+        ctx.beginPath();
+        // Raio de 18px proporcional ao CSS
+        const borderRadius = 18;
+        if (ctx.roundRect) {
+            ctx.roundRect(0, 0, width, height, borderRadius);
+        } else {
+            ctx.rect(0, 0, width, height); // Fallback
+        }
+        ctx.clip(); // Cortar tudo que desenhar fora
 
-        // 1. Desenhar a base da cabeça (Círculo com padrão)
-        // Replicando lógica de createSegmentGradient mas simplificada para o preview (index 0)
-        let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+        // Criar gradiente do fundo
+        let gradient;
         const colors = skin.colors;
         const pattern = skin.pattern || 'solid';
 
-        // Lógica de padrões (Copiada e adaptada de Snake.js para preview estático)
+        // Adaptar padrões para preencher quadrado
+        if (pattern === 'gradient' || pattern === 'solid') {
+            gradient = ctx.createLinearGradient(0, 0, width, height);
+        } else {
+            // Radial para padrões orgânicos fica melhor no centro
+            gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, width);
+        }
+
         switch (pattern) {
             case 'solid':
             case 'gradient':
@@ -199,101 +223,80 @@ class SkinSelectionManager {
                     gradient.addColorStop(1, colors[0]);
                 }
                 break;
-            case 'spots': // Vaca
+            case 'spots':
             case 'panda':
-                gradient.addColorStop(0, colors[0]);
-                gradient.addColorStop(1, colors[0]);
+                // Fundo base
+                ctx.fillStyle = colors[0];
+                ctx.fillRect(0, 0, width, height);
+                // Manchas decorativas
+                ctx.fillStyle = colors[1];
+                ctx.beginPath();
+                ctx.arc(0, 0, width * 0.4, 0, Math.PI * 2); // Canto sup esq
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(width, height, width * 0.3, 0, Math.PI * 2); // Canto inf dir
+                ctx.fill();
+                gradient = null; // Já desenhamos
                 break;
             case 'stripes':
-            case 'scales':
-            case 'rainbow':
-            case 'fire':
-            case 'ice':
-            case 'toxic':
-            case 'galaxy':
-            case 'neon':
-            case 'lava':
-            case 'electric':
-            case 'shadow':
-            case 'cosmic':
-            case 'rainbow_premium':
-            case 'metallic':
-            case 'diamond':
-            case 'camo':
-                gradient.addColorStop(0, colors[0]);
-                gradient.addColorStop(1, colors.length > 1 ? colors[1] : colors[0]);
+                // Fundo base
+                ctx.fillStyle = colors[0];
+                ctx.fillRect(0, 0, width, height);
+                // Listras verticais
+                ctx.fillStyle = colors.length > 1 ? colors[1] : 'rgba(0,0,0,0.3)';
+                for (let i = 0; i < width; i += 20) {
+                    ctx.fillRect(i, 0, 5, height);
+                }
+                gradient = null;
                 break;
             default:
+                // Cores padrão
                 gradient.addColorStop(0, colors[0]);
-                gradient.addColorStop(1, colors[1] || colors[0]);
+                gradient.addColorStop(1, colors.length > 1 ? colors[1] : Utils.adjustColor(colors[0], -20));
         }
 
-        ctx.fillStyle = gradient;
+        if (gradient) {
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
 
-        // Sombra suave para dar profundidade
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 10;
+        // Adicionar brilho superior (efeito gloss sutil)
+        const shine = ctx.createLinearGradient(0, 0, 0, height / 2);
+        shine.addColorStop(0, 'rgba(255,255,255,0.2)');
+        shine.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = shine;
+        ctx.fillRect(0, 0, width, height / 2);
 
-        ctx.beginPath();
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.fill();
+        // 2. DESENHAR ROSTO (Centralizado e Grande)
+        ctx.save();
+        ctx.translate(cx, cy);
 
-        ctx.shadowBlur = 0; // Limpar sombra para os detalhes
-
-        // 2. Desenhar detalhes específicos (Orelhas, etc) ANTES do rosto se necessário
-        // Alguns métodos desenham coisas fora da cabeça, então chamamos eles.
-        // O método renderHead do Snake espera um contexto transladado mas desenha RELATIVO a posição da tela.
-        // Aqui já transladamos o contexto para o centro (0,0 locais).
-        // Nossos métodos drawXFace desenham em (0,0) ou offsets relativos ao size.
-
+        // Configuração de Rosto
         const faceConfig = skin.face || { type: 'standard', eyeColor: '#ffffff' };
 
-        // Wrapper para chamar os métodos da dummySnake com o contexto atual
-        // Precisamos garantir que 'this' dentro dos métodos seja a dummySnake
+        // Escala do rosto para caber bem no card (0.5 do tamanho do card aprox)
+        const faceSize = width * 0.55;
+
+        // Sombra do rosto para destacar do fundo
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 5;
 
         switch (faceConfig.type) {
-            case 'cute':
-                dummySnake.drawCuteFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'angry':
-                dummySnake.drawAngryFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'happy':
-                dummySnake.drawHappyFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'cyclops':
-                dummySnake.drawCyclopsFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'cat':
-                dummySnake.drawCatFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'panda':
-                dummySnake.drawPandaFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'cool':
-                dummySnake.drawCoolFace(ctx, size);
-                break;
-            case 'alien':
-                dummySnake.drawAlienFace(ctx, size, faceConfig.eyeColor);
-                break;
-            case 'lion':
-                dummySnake.drawLionHead(ctx, size);
-                break;
-            case 'cow':
-                dummySnake.drawCowHead(ctx, size);
-                break;
-            case 'fox':
-                dummySnake.drawFoxHead(ctx, size);
-                break;
-            case 'rabbit':
-                dummySnake.drawRabbitHead(ctx, size);
-                break;
-            case 'bear':
-                dummySnake.drawBearHead(ctx, size);
-                break;
-            default: // standard
-                dummySnake.drawStandardFace(ctx, size, faceConfig.eyeColor);
-                break;
+            case 'cute': dummySnake.drawCuteFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'angry': dummySnake.drawAngryFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'happy': dummySnake.drawHappyFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'cyclops': dummySnake.drawCyclopsFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'cat': dummySnake.drawCatFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'panda': dummySnake.drawPandaFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'cool': dummySnake.drawCoolFace(ctx, faceSize); break;
+            case 'alien': dummySnake.drawAlienFace(ctx, faceSize, faceConfig.eyeColor); break;
+            case 'lion': dummySnake.drawLionHead(ctx, faceSize); break;
+            case 'cow': dummySnake.drawCowHead(ctx, faceSize); break;
+            case 'fox': dummySnake.drawFoxHead(ctx, faceSize); break;
+            case 'rabbit': dummySnake.drawRabbitHead(ctx, faceSize); break;
+            case 'bear': dummySnake.drawBearHead(ctx, faceSize); break;
+            default: dummySnake.drawStandardFace(ctx, faceSize, faceConfig.eyeColor); break;
         }
 
         ctx.restore();

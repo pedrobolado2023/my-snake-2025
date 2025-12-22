@@ -159,29 +159,34 @@
 .skin-card {
     position: relative;
     aspect-ratio: 1;
-    border-radius: 15px;
+    border-radius: 22px;
+    /* Borda arredondada estilo iOS/App */
     border: 3px solid transparent;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     overflow: hidden;
-    background: rgba(10, 14, 39, 0.8);
+    background: rgba(15, 20, 45, 0.6);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .skin-card-preview {
     width: 100%;
-    height: 70%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 10px;
+    height: 100%;
+    /* Ocupa tudo */
+    position: absolute;
+    /* Fica por baixo do nome */
+    top: 0;
+    left: 0;
+    padding: 0;
+    display: block;
 }
 
 .skin-preview-canvas {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+    /* Ligeiramente menor que o card */
     transition: transform 0.3s ease;
 }
 
@@ -203,14 +208,16 @@
 }
 
 .skin-card:hover {
-    transform: scale(1.05);
-    border-color: var(--neon-cyan);
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
 .skin-card.selected {
     border-color: var(--neon-cyan);
-    box-shadow: 0 0 25px rgba(0, 255, 204, 0.6);
-    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--bg-dark), 0 0 25px rgba(0, 255, 204, 0.5);
+    transform: scale(1.05);
+    z-index: 10;
 }
 
 .skin-card.locked {
