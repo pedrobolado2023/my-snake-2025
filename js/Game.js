@@ -398,6 +398,14 @@ class Game {
                 snake.angle = serverData.angle || snake.angle;
                 snake.score = serverData.score || snake.score;
 
+                // 🎨 Atualizar skin se recebida do servidor
+                if (serverData.skin) {
+                    const newSkin = CONFIG.SKINS.find(s => s.id === serverData.skin);
+                    if (newSkin) {
+                        snake.skin = newSkin;
+                    }
+                }
+
                 playerMap.delete(snake.id);
                 return true;
             } else {

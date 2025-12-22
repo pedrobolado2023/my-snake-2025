@@ -81,6 +81,7 @@ class GameRoom {
         this.players.set(socketId, {
             id: socketId,
             name: playerData.name,
+            skin: playerData.skin || 'orange', // 🎨 Salvar skin do jogador
             x: playerData.x || 0,
             y: playerData.y || 0,
             angle: playerData.angle || 0,
@@ -216,7 +217,8 @@ io.on('connection', (socket) => {
         // Notificar outros jogadores
         socket.to(currentRoomId).emit('playerJoined', {
             id: socket.id,
-            name: playerData.name
+            name: playerData.name,
+            skin: playerData.skin || 'orange' // 🎨 Enviar skin para outros jogadores
         });
 
         console.log(`✅ ${playerData.name} entrou na sala ${currentRoomId} (${currentRoom.players.size} jogadores)`);
@@ -229,13 +231,15 @@ io.on('connection', (socket) => {
         currentRoom.updatePlayer(socket.id, data);
 
         // Transmitir para outros jogadores na mesma sala
+        const player = currentRoom.players.get(socket.id);
         socket.to(currentRoomId).emit('playerMoved', {
             id: socket.id,
             x: data.x,
             y: data.y,
             angle: data.angle,
             length: data.length,
-            score: data.score
+            score: data.score,
+            skin: player ? player.skin : 'orange' // 🎨 Incluir skin nas atualizações
         });
     });
 
