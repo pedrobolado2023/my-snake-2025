@@ -961,6 +961,9 @@ class Snake {
 
     die() {
         this.isDead = true;
+        // Limpar segmentos imediatamente para evitar corpo "fantasma"
+        // Os segmentos já foram salvos em getDeathFood() antes de chamar die()
+        this.segments = [];
     }
 
     getDeathFood() {

@@ -464,11 +464,13 @@ class Game {
     }
 
     handleSnakeDeath(snake, killer) {
-        snake.die();
-
-        // Criar comida do corpo
+        // IMPORTANTE: Criar comida do corpo ANTES de chamar die()
+        // porque die() agora limpa os segmentos imediatamente
         const deathFood = snake.getDeathFood();
         this.food.push(...deathFood);
+
+        // Agora sim, marcar como morta e limpar segmentos
+        snake.die();
 
         // Criar partículas
         this.createParticles(
