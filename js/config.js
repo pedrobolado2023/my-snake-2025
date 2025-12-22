@@ -92,7 +92,7 @@ const CONFIG = {
     SKINS: [
         // Básico - Cores sólidas e gradientes simples (Tudo desbloqueado)
         { id: 'orange', name: 'Cilho', category: 'BASICO', colors: ['#ff6b35', '#ff9f1c'], pattern: 'solid', unlocked: true, face: { type: 'cute', eyeColor: '#ffffff' } },
-        { id: 'dragon', name: 'Dragão', category: 'BASICO', colors: ['#9370db', '#ba55d3'], pattern: 'scales', unlocked: true, face: { type: 'angry', eyeColor: '#ffff00' } },
+        { id: 'dragon', name: 'Dragão', category: 'BASICO', colors: ['#9370db', '#ba55d3'], pattern: 'scales', unlocked: true, face: { type: 'dragon', eyeColor: '#000000' } },
         { id: 'fox', name: 'Raposa', category: 'BASICO', colors: ['#ff6347', '#ff7f50'], pattern: 'gradient', unlocked: true, face: { type: 'fox', eyeColor: '#ffffff' } },
         { id: 'gray', name: 'Cisne', category: 'BASICO', colors: ['#e0e0e0', '#bdbdbd'], pattern: 'solid', unlocked: true, face: { type: 'standard', eyeColor: '#000000' } },
         { id: 'cyan', name: 'Clone', category: 'BASICO', colors: ['#00ffcc', '#00b4d8'], pattern: 'solid', unlocked: true, face: { type: 'happy', eyeColor: '#ffffff' } },

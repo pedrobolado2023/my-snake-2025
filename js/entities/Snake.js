@@ -447,6 +447,160 @@ class Snake {
         return gradient;
     }
 
+    drawDragonHead(ctx, size) {
+        // Cores baseadas na imagem
+        const basePurple = '#6A2C91'; // Roxo escuro base
+        const lightPurple = '#9B5BA6'; // Escamas mais claras
+        const spikePurple = '#4B0082'; // Cristas escuras
+        const hornGold = '#FFD700'; // Ouro
+        const energyCyan = '#00FFCC'; // Energia
+        const strokeWhite = '#FFFFFF';
+
+        // Stroke Branco Externo (Sticker)
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = size * 0.15;
+        ctx.strokeStyle = strokeWhite;
+
+        ctx.save();
+
+        // 1. BASE DA CABEÇA E CRISTAS
+
+        // Cristas Laterais (Spikes)
+        ctx.fillStyle = spikePurple;
+        ctx.beginPath();
+        // Esq
+        ctx.moveTo(-size * 0.5, 0);
+        ctx.lineTo(-size * 0.9, -size * 0.5); // Ponta superior
+        ctx.lineTo(-size * 0.6, 0);
+        ctx.lineTo(-size * 0.8, size * 0.3); // Ponta inferior
+        ctx.lineTo(-size * 0.4, size * 0.5);
+        // Dir (Simétrico)
+        ctx.moveTo(size * 0.5, 0);
+        ctx.lineTo(size * 0.9, -size * 0.5);
+        ctx.lineTo(size * 0.6, 0);
+        ctx.lineTo(size * 0.8, size * 0.3);
+        ctx.lineTo(size * 0.4, size * 0.5);
+
+        // Desenhar stroke das cristas junto com a cabeça? 
+        // Melhor desenhar cristas separadas para manter detalhe, mas stroke unificado é dificil sem path unico.
+        // Vamos desenhar tudo que tem stroke branco num path só para o fundo.
+
+        ctx.beginPath();
+        // Topo (entre chifres)
+        ctx.moveTo(-size * 0.3, -size * 0.7);
+        ctx.globalCompositeOperation = 'source-over';
+        // Pequenos espinhos no topo
+        ctx.lineTo(0, -size * 0.9);
+        ctx.lineTo(size * 0.3, -size * 0.7);
+        // Lateral Dir com Cristas
+        ctx.lineTo(size * 0.9, -size * 0.5);
+        ctx.lineTo(size * 0.6, 0);
+        ctx.lineTo(size * 0.8, size * 0.3);
+        ctx.lineTo(size * 0.4, size * 0.6);
+        // Queixo
+        ctx.quadraticCurveTo(0, size * 0.8, -size * 0.4, size * 0.6);
+        // Lateral Esq com Cristas
+        ctx.lineTo(-size * 0.8, size * 0.3);
+        ctx.lineTo(-size * 0.6, 0);
+        ctx.lineTo(-size * 0.9, -size * 0.5);
+        ctx.closePath();
+
+        // Desenhar Contorno
+        ctx.stroke();
+        // Preencher Base
+        ctx.fillStyle = basePurple;
+        ctx.fill();
+
+        // 2. CHIFRES (Dourados)
+        ctx.fillStyle = hornGold;
+        // Esq
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.3, -size * 0.6);
+        ctx.quadraticCurveTo(-size * 0.5, -size * 1.2, -size * 0.7, -size * 0.8); // Curva pra fora
+        ctx.lineTo(-size * 0.4, -size * 0.5);
+        ctx.fill();
+        // Anéis do chifre (detalhe)
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-size * 0.4, -size * 0.7); ctx.lineTo(-size * 0.5, -size * 0.8); ctx.stroke();
+
+        // Dir
+        ctx.beginPath();
+        ctx.moveTo(size * 0.3, -size * 0.6);
+        ctx.quadraticCurveTo(size * 0.5, -size * 1.2, size * 0.7, -size * 0.8);
+        ctx.lineTo(size * 0.4, -size * 0.5);
+        ctx.fill();
+        ctx.beginPath(); ctx.moveTo(size * 0.4, -size * 0.7); ctx.lineTo(size * 0.5, -size * 0.8); ctx.stroke();
+
+        // 3. ESCAMAS FACIAIS (Textura)
+        ctx.fillStyle = lightPurple;
+        // Escama testa
+        ctx.beginPath(); ctx.moveTo(0, -size * 0.6); ctx.lineTo(size * 0.2, -size * 0.4); ctx.lineTo(0, -size * 0.2); ctx.lineTo(-size * 0.2, -size * 0.4); ctx.fill();
+        // Escamas bochechas
+        ctx.beginPath(); ctx.arc(-size * 0.5, size * 0.2, size * 0.15, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.5, size * 0.2, size * 0.15, 0, Math.PI * 2); ctx.fill();
+
+        // 4. OLHOS (Grandes Pretos Brilhantes)
+        const eyeX = size * 0.35;
+        const eyeY = -size * 0.1;
+        const eyeSize = size * 0.25;
+
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Brilhos
+        ctx.fillStyle = '#FFFFFF';
+        // Esq
+        ctx.beginPath(); ctx.arc(-eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
+        // Dir
+        ctx.beginPath(); ctx.arc(eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
+
+        // 5. NARIZ/FOCINHO
+        ctx.fillStyle = spikePurple; // Roxo mais escuro
+        ctx.beginPath();
+        ctx.ellipse(0, size * 0.35, size * 0.15, size * 0.1, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Narinas
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-size * 0.08, size * 0.35, size * 0.03, 0, Math.PI * 2);
+        ctx.arc(size * 0.08, size * 0.35, size * 0.03, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 6. ENERGIA (Raios Ciano)
+        ctx.strokeStyle = energyCyan;
+        ctx.lineWidth = size * 0.05;
+        ctx.shadowColor = energyCyan;
+        ctx.shadowBlur = 10;
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        // Raio Esq
+        ctx.moveTo(-size * 0.4, size * 0.5);
+        ctx.lineTo(-size * 0.6, size * 0.3);
+        ctx.lineTo(-size * 0.5, 0);
+        ctx.stroke();
+
+        // Raio Dir
+        ctx.beginPath();
+        ctx.moveTo(size * 0.4, size * 0.5);
+        ctx.lineTo(size * 0.6, size * 0.3);
+        ctx.lineTo(size * 0.5, 0);
+        ctx.stroke();
+
+        // Pequeno no topo
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.5);
+        ctx.lineTo(0, -size * 0.8);
+        ctx.stroke();
+
+        ctx.shadowBlur = 0; // Reset
+        ctx.restore();
+    }
+
     renderHead(ctx, camera) {
         const head = this.segments[0];
         if (!head) return;
@@ -483,6 +637,7 @@ class Snake {
             case 'cool': this.drawCoolFace(ctx, headSize); break;
             case 'alien': this.drawAlienFace(ctx, headSize, faceConfig.eyeColor); break;
             case 'lion': this.drawLionHead(ctx, headSize); break;
+            case 'dragon': this.drawDragonHead(ctx, headSize); break; // NOVO DRAGÃO
             case 'cow': this.drawCowHead(ctx, headSize); break;
             case 'fox': this.drawFoxHead(ctx, headSize); break;
             case 'rabbit': this.drawRabbitHead(ctx, headSize); break;
