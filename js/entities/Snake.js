@@ -805,37 +805,165 @@ class Snake {
     }
 
     drawFoxHead(ctx, size) {
-        // Orelhas grandes e pontudas (Topo)
-        ctx.fillStyle = this.skin.colors[0];
+        // Cores baseadas na imagem (ou na skin)
+        const furColor = '#FF6B00'; // Laranja vibrante da imagem
+        const whiteColor = '#FFFFFF';
+        const blackColor = '#1a1a1a'; // Preto suave
+
+        // Contorno Branco estilo Sticker (Opcional, mas fiel à imagem)
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = size * 0.15;
+        ctx.strokeStyle = whiteColor;
+
+        ctx.save();
+
+        // 1. BASE DA CABEÇA (Formato largo nas bochechas)
         ctx.beginPath();
-        // Esquerda
-        ctx.moveTo(-size * 0.3, -size * 0.5);
-        ctx.lineTo(-size * 0.7, -size * 1.3);
-        ctx.lineTo(-size * 0.9, -size * 0.3);
-        ctx.fill();
-        // Direita
-        ctx.moveTo(size * 0.3, -size * 0.5);
-        ctx.lineTo(size * 0.7, -size * 1.3);
-        ctx.lineTo(size * 0.9, -size * 0.3);
+        // Topo da cabeça
+        ctx.moveTo(-size * 0.5, -size * 0.4);
+        ctx.quadraticCurveTo(0, -size * 0.5, size * 0.5, -size * 0.4);
+        // Lado direito (Bochecha larga)
+        ctx.quadraticCurveTo(size * 0.9, -size * 0.1, size * 0.9, size * 0.2);
+        // Queixo
+        ctx.quadraticCurveTo(size * 0.5, size * 0.6, 0, size * 0.7);
+        // Lado esquerdo
+        ctx.quadraticCurveTo(-size * 0.5, size * 0.6, -size * 0.9, size * 0.2);
+        ctx.quadraticCurveTo(-size * 0.9, -size * 0.1, -size * 0.5, -size * 0.4);
+
+        // Desenhar contorno branco externo primeiro
+        ctx.stroke();
+
+        // Preencher com laranja
+        ctx.fillStyle = furColor;
         ctx.fill();
 
-        // Bochechas Brancas
-        ctx.fillStyle = '#FFFFFF';
+        // 2. ORELHAS (Grandes e pontudas)
+        ctx.save();
+        // Orelha Esquerda
+        ctx.translate(-size * 0.55, -size * 0.45);
+        ctx.rotate(-Math.PI / 8);
+        this.drawDetailedFoxEar(ctx, size, furColor, blackColor, whiteColor);
+        ctx.restore();
+
+        // Orelha Direita
+        ctx.save();
+        ctx.translate(size * 0.55, -size * 0.45);
+        ctx.rotate(Math.PI / 8);
+        ctx.scale(-1, 1); // Espelhar
+        this.drawDetailedFoxEar(ctx, size, furColor, blackColor, whiteColor);
+        ctx.restore();
+
+        // 3. MÁSCARA BRANCA (Parte inferior do rosto)
+        ctx.fillStyle = whiteColor;
         ctx.beginPath();
-        ctx.moveTo(0, size * 0.5);
-        ctx.quadraticCurveTo(-size * 0.8, 0, -size * 0.2, -size * 0.2);
-        ctx.quadraticCurveTo(0, 0, size * 0.2, -size * 0.2);
-        ctx.quadraticCurveTo(size * 0.8, 0, 0, size * 0.5);
+        // Começa na lateral da bochecha esquerda
+        ctx.moveTo(-size * 0.9, size * 0.2);
+        // Curva suave para baixo dos olhos
+        ctx.quadraticCurveTo(-size * 0.5, size * 0.1, 0, size * 0.35); // Ponto central acima do nariz
+        // Curva simétrica para direita
+        ctx.quadraticCurveTo(size * 0.5, size * 0.1, size * 0.9, size * 0.2);
+        // Fecha o formato seguindo o queixo
+        ctx.quadraticCurveTo(size * 0.5, size * 0.6, 0, size * 0.7);
+        ctx.quadraticCurveTo(-size * 0.5, size * 0.6, -size * 0.9, size * 0.2);
         ctx.fill();
 
-        // Nariz pontudo preto (Baixo)
-        ctx.fillStyle = '#000000';
+        // 4. SOBRANCELHAS (Manchas brancas ovais)
+        ctx.fillStyle = whiteColor;
+        // Esq
         ctx.beginPath();
-        ctx.arc(0, size * 0.45, size * 0.15, 0, Math.PI * 2);
+        ctx.ellipse(-size * 0.25, -size * 0.25, size * 0.08, size * 0.12, -Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Dir
+        ctx.beginPath();
+        ctx.ellipse(size * 0.25, -size * 0.25, size * 0.08, size * 0.12, Math.PI / 6, 0, Math.PI * 2);
         ctx.fill();
 
-        // Olhos espertos
-        this.drawStandardFace(ctx, size * 0.9, '#000000');
+        // 5. OLHOS (Grandes, Pretos, Brilhantes)
+        const eyeY = 0; // Posição vertical
+        const eyeX = size * 0.35;
+        const eyeSize = size * 0.22; // Olhos bem grandes
+
+        ctx.fillStyle = blackColor;
+        ctx.beginPath();
+        ctx.arc(-eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Brilhos nos Olhos (Essencial para o look da imagem)
+        ctx.fillStyle = whiteColor;
+        // Brilho Grande (Canto superior)
+        ctx.beginPath();
+        ctx.arc(-eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2);
+        ctx.arc(eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        // Brilho Pequeno (Canto inferior oposto - opcional, mas dá profundidade)
+        ctx.beginPath();
+        ctx.arc(-eyeX - eyeSize * 0.2, eyeY + eyeSize * 0.3, eyeSize * 0.15, 0, Math.PI * 2);
+        ctx.arc(eyeX - eyeSize * 0.2, eyeY + eyeSize * 0.3, eyeSize * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 6. NARIZ (Triângulo arredondado preto)
+        ctx.fillStyle = blackColor;
+        ctx.beginPath();
+        const noseY = size * 0.45;
+        ctx.moveTo(-size * 0.12, noseY - size * 0.05);
+        ctx.quadraticCurveTo(0, noseY - size * 0.08, size * 0.12, noseY - size * 0.05); // Topo curvo
+        ctx.quadraticCurveTo(0, noseY + size * 0.15, -size * 0.12, noseY - size * 0.05); // Ponta baixo
+        ctx.fill();
+        // Brilho no nariz
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.beginPath();
+        ctx.ellipse(0, noseY - size * 0.02, size * 0.06, size * 0.03, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 7. BOCA (Pequeno 'w' ou '3' deitado)
+        ctx.strokeStyle = blackColor;
+        ctx.lineWidth = size * 0.05;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.1, noseY + size * 0.1);
+        ctx.quadraticCurveTo(0, noseY + size * 0.2, size * 0.1, noseY + size * 0.1);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    // Helper para desenhar orelha detalhada da raposa
+    drawDetailedFoxEar(ctx, size, furColor, blackColor, whiteColor) {
+        // Base Laranja
+        ctx.fillStyle = furColor;
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.3, 0); // Base esq
+        ctx.quadraticCurveTo(0, -size * 0.8, size * 0.3, 0); // Base dir
+        ctx.fill(); // Preencher base para não vazar
+
+        // Formato da orelha completa
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.3, 0);
+        // Curva externa até a ponta
+        ctx.quadraticCurveTo(-size * 0.1, -size * 1.0, 0, -size * 1.2);
+        // Curva interna descendo
+        ctx.quadraticCurveTo(size * 0.1, -size * 1.0, size * 0.3, 0);
+        ctx.fill();
+
+        // Ponta Preta
+        ctx.fillStyle = blackColor;
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.15, -size * 0.7); // Começo do preto
+        ctx.quadraticCurveTo(0, -size * 1.2, 0, -size * 1.2); // Ponta
+        ctx.quadraticCurveTo(0.05 * size, -size * 0.8, size * 0.15, -size * 0.7);
+        // Fechar forma irregularmente para parecer pelo
+        ctx.lineTo(0, -size * 0.5);
+        ctx.fill();
+
+        // Interior Peludo Branco
+        ctx.fillStyle = whiteColor;
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.15, -size * 0.1);
+        ctx.quadraticCurveTo(0, -size * 0.6, size * 0.15, -size * 0.1);
+        // base peluda (ziguezague simplificado)
+        ctx.lineTo(0, -size * 0.05);
+        ctx.fill();
     }
 
     drawRabbitHead(ctx, size) {
