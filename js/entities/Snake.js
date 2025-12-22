@@ -377,6 +377,56 @@ class Snake {
                 gradient.addColorStop(1, Utils.adjustColor(colors[scaleIndex], -20));
                 break;
 
+            case 'camo': // Camuflagem
+                // Padrão irregular de camuflagem
+                const camoPattern = (index % 3 === 0) ? 0 : (index % 5 === 0) ? 1 : 2;
+                const camoColor = colors[camoPattern % colors.length];
+                gradient.addColorStop(0, camoColor);
+                gradient.addColorStop(1, Utils.adjustColor(camoColor, -15));
+                break;
+
+            case 'metallic': // Metálico (Ouro)
+            case 'diamond': // Diamante
+                // Efeito brilhante com reflexos
+                const metalIndex = index % colors.length;
+                gradient.addColorStop(0, '#ffffff'); // Brilho
+                gradient.addColorStop(0.3, colors[metalIndex]);
+                gradient.addColorStop(0.7, colors[(metalIndex + 1) % colors.length]);
+                gradient.addColorStop(1, Utils.adjustColor(colors[metalIndex], -30));
+                break;
+
+            case 'lava': // Lava
+                // Vermelho/laranja com preto
+                const lavaIndex = index % colors.length;
+                gradient.addColorStop(0, colors[lavaIndex]);
+                gradient.addColorStop(0.5, colors[(lavaIndex + 1) % colors.length]);
+                gradient.addColorStop(1, '#000000');
+                break;
+
+            case 'electric': // Elétrico
+                // Amarelo/ciano com branco brilhante
+                const electricIndex = index % colors.length;
+                gradient.addColorStop(0, '#ffffff');
+                gradient.addColorStop(0.4, colors[electricIndex]);
+                gradient.addColorStop(1, colors[(electricIndex + 1) % colors.length]);
+                break;
+
+            case 'shadow': // Sombra
+                // Tons escuros com variação sutil
+                const shadowIndex = index % colors.length;
+                gradient.addColorStop(0, colors[shadowIndex]);
+                gradient.addColorStop(1, '#000000');
+                break;
+
+            case 'cosmic': // Cósmico
+            case 'rainbow_premium': // Arco-íris Premium
+                // Todas as cores do arco-íris
+                const cosmicIndex = index % colors.length;
+                gradient.addColorStop(0, colors[cosmicIndex]);
+                gradient.addColorStop(0.5, colors[(cosmicIndex + 1) % colors.length]);
+                gradient.addColorStop(1, colors[(cosmicIndex + 2) % colors.length]);
+                break;
+
             case 'fire':
             case 'ice':
             case 'toxic':
