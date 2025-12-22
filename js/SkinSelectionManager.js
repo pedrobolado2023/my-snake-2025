@@ -132,29 +132,26 @@ class SkinSelectionManager {
             card.classList.add('selected');
         }
 
-        // Preview da skin
-        const preview = document.createElement('div');
-        preview.className = 'skin-card-preview';
+        // Preview da skin (Agora usando Canvas para desenhar detalhes)
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'skin-card-preview';
 
-        const snakePreview = document.createElement('div');
-        snakePreview.className = 'skin-preview-snake';
+        const canvas = document.createElement('canvas');
+        canvas.width = 100; // Resolução interna
+        canvas.height = 100;
+        canvas.className = 'skin-preview-canvas';
 
-        // Aplicar gradiente ou cor sólida
-        if (skin.colors.length === 1) {
-            snakePreview.style.background = skin.colors[0];
-        } else {
-            const gradient = `linear-gradient(135deg, ${skin.colors.join(', ')})`;
-            snakePreview.style.background = gradient;
-        }
+        // Renderizar a skin no canvas
+        this.renderSkinOnCanvas(canvas, skin);
 
-        preview.appendChild(snakePreview);
+        previewContainer.appendChild(canvas);
 
         // Nome da skin
         const name = document.createElement('div');
         name.className = 'skin-card-name';
         name.textContent = skin.name;
 
-        card.appendChild(preview);
+        card.appendChild(previewContainer);
         card.appendChild(name);
 
         // Event listener
@@ -165,6 +162,141 @@ class SkinSelectionManager {
         }
 
         return card;
+    }
+
+    // Renderizar a skin com detalhes no canvas do menu
+    renderSkinOnCanvas(canvas, skin) {
+        const ctx = canvas.getContext('2d');
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const size = 35; // Tamanho da cabeça no card
+
+        // Criar uma cobra temporária para usar os métodos de desenho
+        // (Não adicionamos ao jogo, é apenas para acessar a lógica de renderização)
+        const dummySnake = new Snake('preview', 'Preview', 0, 0, skin);
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Rotacionar para ficar apontando para cima/diagonal para melhor visualização
+        ctx.rotate(-Math.PI / 4);
+
+        // 1. Desenhar a base da cabeça (Círculo com padrão)
+        // Replicando lógica de createSegmentGradient mas simplificada para o preview (index 0)
+        let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+        const colors = skin.colors;
+        const pattern = skin.pattern || 'solid';
+
+        // Lógica de padrões (Copiada e adaptada de Snake.js para preview estático)
+        switch (pattern) {
+            case 'solid':
+            case 'gradient':
+                if (colors.length > 1) {
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[1]);
+                } else {
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[0]);
+                }
+                break;
+            case 'spots': // Vaca
+            case 'panda':
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(1, colors[0]);
+                break;
+            case 'stripes':
+            case 'scales':
+            case 'rainbow':
+            case 'fire':
+            case 'ice':
+            case 'toxic':
+            case 'galaxy':
+            case 'neon':
+            case 'lava':
+            case 'electric':
+            case 'shadow':
+            case 'cosmic':
+            case 'rainbow_premium':
+            case 'metallic':
+            case 'diamond':
+            case 'camo':
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(1, colors.length > 1 ? colors[1] : colors[0]);
+                break;
+            default:
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(1, colors[1] || colors[0]);
+        }
+
+        ctx.fillStyle = gradient;
+
+        // Sombra suave para dar profundidade
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 10;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0; // Limpar sombra para os detalhes
+
+        // 2. Desenhar detalhes específicos (Orelhas, etc) ANTES do rosto se necessário
+        // Alguns métodos desenham coisas fora da cabeça, então chamamos eles.
+        // O método renderHead do Snake espera um contexto transladado mas desenha RELATIVO a posição da tela.
+        // Aqui já transladamos o contexto para o centro (0,0 locais).
+        // Nossos métodos drawXFace desenham em (0,0) ou offsets relativos ao size.
+
+        const faceConfig = skin.face || { type: 'standard', eyeColor: '#ffffff' };
+
+        // Wrapper para chamar os métodos da dummySnake com o contexto atual
+        // Precisamos garantir que 'this' dentro dos métodos seja a dummySnake
+
+        switch (faceConfig.type) {
+            case 'cute':
+                dummySnake.drawCuteFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'angry':
+                dummySnake.drawAngryFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'happy':
+                dummySnake.drawHappyFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'cyclops':
+                dummySnake.drawCyclopsFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'cat':
+                dummySnake.drawCatFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'panda':
+                dummySnake.drawPandaFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'cool':
+                dummySnake.drawCoolFace(ctx, size);
+                break;
+            case 'alien':
+                dummySnake.drawAlienFace(ctx, size, faceConfig.eyeColor);
+                break;
+            case 'lion':
+                dummySnake.drawLionHead(ctx, size);
+                break;
+            case 'cow':
+                dummySnake.drawCowHead(ctx, size);
+                break;
+            case 'fox':
+                dummySnake.drawFoxHead(ctx, size);
+                break;
+            case 'rabbit':
+                dummySnake.drawRabbitHead(ctx, size);
+                break;
+            case 'bear':
+                dummySnake.drawBearHead(ctx, size);
+                break;
+            default: // standard
+                dummySnake.drawStandardFace(ctx, size, faceConfig.eyeColor);
+                break;
+        }
+
+        ctx.restore();
     }
 
     // Selecionar skin

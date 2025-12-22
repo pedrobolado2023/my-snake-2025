@@ -174,13 +174,19 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    padding: 10px;
 }
 
-.skin-preview-snake {
+.skin-preview-canvas {
     width: 80%;
-    height: 60%;
-    border-radius: 50px;
-    position: relative;
+    height: 80%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.skin-card:hover .skin-preview-canvas {
+    transform: scale(1.1);
 }
 
 .skin-card-name {
