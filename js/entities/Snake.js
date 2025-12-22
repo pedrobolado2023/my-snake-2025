@@ -448,157 +448,170 @@ class Snake {
     }
 
     drawDragonHead(ctx, size) {
-        // Cores baseadas na imagem
-        const basePurple = '#6A2C91'; // Roxo escuro base
-        const lightPurple = '#9B5BA6'; // Escamas mais claras
-        const spikePurple = '#4B0082'; // Cristas escuras
-        const hornGold = '#FFD700'; // Ouro
-        const energyCyan = '#00FFCC'; // Energia
-        const strokeWhite = '#FFFFFF';
+        // Cores da imagem
+        const scaleDark = '#4a148c';   // Roxo profundo (sombra)
+        const scaleMid = '#7b1fa2';    // Roxo médio (base)
+        const scaleLight = '#ae52d4';  // Roxo claro (luz)
+        const energyColor = '#00ffff'; // Ciano neon (rachaduras)
+        const hornGold = '#ffd700';    // Dourado
+        const hornShadow = '#b8860b';  // Sombra dourada
 
-        // Stroke Branco Externo (Sticker)
+        // Contorno Branco (Sticker)
         ctx.lineJoin = 'round';
-        ctx.lineWidth = size * 0.15;
-        ctx.strokeStyle = strokeWhite;
+        ctx.lineCap = 'round';
+        ctx.lineWidth = size * 0.18;
+        ctx.strokeStyle = '#ffffff';
 
-        ctx.save();
-
-        // 1. BASE DA CABEÇA E CRISTAS
-
-        // Cristas Laterais (Spikes)
-        ctx.fillStyle = spikePurple;
+        // PATH DO CONTORNO GERAL (Para o stroke branco ficar por baixo)
         ctx.beginPath();
-        // Esq
-        ctx.moveTo(-size * 0.5, 0);
-        ctx.lineTo(-size * 0.9, -size * 0.5); // Ponta superior
-        ctx.lineTo(-size * 0.6, 0);
-        ctx.lineTo(-size * 0.8, size * 0.3); // Ponta inferior
-        ctx.lineTo(-size * 0.4, size * 0.5);
-        // Dir (Simétrico)
-        ctx.moveTo(size * 0.5, 0);
-        ctx.lineTo(size * 0.9, -size * 0.5);
-        ctx.lineTo(size * 0.6, 0);
-        ctx.lineTo(size * 0.8, size * 0.3);
-        ctx.lineTo(size * 0.4, size * 0.5);
-
-        // Desenhar stroke das cristas junto com a cabeça? 
-        // Melhor desenhar cristas separadas para manter detalhe, mas stroke unificado é dificil sem path unico.
-        // Vamos desenhar tudo que tem stroke branco num path só para o fundo.
-
-        ctx.beginPath();
-        // Topo (entre chifres)
-        ctx.moveTo(-size * 0.3, -size * 0.7);
-        ctx.globalCompositeOperation = 'source-over';
-        // Pequenos espinhos no topo
-        ctx.lineTo(0, -size * 0.9);
-        ctx.lineTo(size * 0.3, -size * 0.7);
-        // Lateral Dir com Cristas
-        ctx.lineTo(size * 0.9, -size * 0.5);
-        ctx.lineTo(size * 0.6, 0);
-        ctx.lineTo(size * 0.8, size * 0.3);
-        ctx.lineTo(size * 0.4, size * 0.6);
+        // Topo com pontas
+        ctx.moveTo(-size * 0.5, -size * 0.4);
+        ctx.lineTo(-size * 0.2, -size * 0.6); // Ponta centro esq
+        ctx.lineTo(0, -size * 0.5);           // Centro
+        ctx.lineTo(size * 0.2, -size * 0.6);  // Ponta centro dir
+        ctx.lineTo(size * 0.5, -size * 0.4);
+        // Lateral Dir (Cristas)
+        ctx.quadraticCurveTo(size * 1.1, -size * 0.2, size * 0.9, size * 0.2);
+        ctx.quadraticCurveTo(size * 1.0, size * 0.5, size * 0.4, size * 0.7);
         // Queixo
-        ctx.quadraticCurveTo(0, size * 0.8, -size * 0.4, size * 0.6);
-        // Lateral Esq com Cristas
-        ctx.lineTo(-size * 0.8, size * 0.3);
-        ctx.lineTo(-size * 0.6, 0);
-        ctx.lineTo(-size * 0.9, -size * 0.5);
+        ctx.quadraticCurveTo(0, size * 0.9, -size * 0.4, size * 0.7);
+        // Lateral Esq
+        ctx.quadraticCurveTo(-size * 1.0, size * 0.5, -size * 0.9, size * 0.2);
+        ctx.quadraticCurveTo(-size * 1.1, -size * 0.2, -size * 0.5, -size * 0.4);
         ctx.closePath();
 
-        // Desenhar Contorno
-        ctx.stroke();
-        // Preencher Base
-        ctx.fillStyle = basePurple;
+        ctx.stroke(); // Desenha o contorno branco
+
+        // 1. FUNDO ENERGIA (Base que vai brilhar nas frestas)
+        ctx.fillStyle = energyColor;
+        ctx.shadowColor = energyColor;
+        ctx.shadowBlur = 15;
         ctx.fill();
+        ctx.shadowBlur = 0;
 
-        // 2. CHIFRES (Dourados)
-        ctx.fillStyle = hornGold;
-        // Esq
+        // Função auxiliar para desenhar uma "Placa de Escama" com volume
+        const drawScale = (x, y, scaleW, scaleH, rotation = 0) => {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+
+            ctx.beginPath();
+            // Formato irregular de pedra
+            ctx.moveTo(-scaleW / 2, -scaleH / 3);
+            ctx.lineTo(0, -scaleH / 2);
+            ctx.lineTo(scaleW / 2, -scaleH / 3);
+            ctx.lineTo(scaleW / 2, scaleH / 3);
+            ctx.lineTo(0, scaleH / 2);
+            ctx.lineTo(-scaleW / 2, scaleH / 3);
+            ctx.closePath();
+
+            // Sombra interna (Bevel)
+            ctx.fillStyle = scaleDark;
+            ctx.fill();
+
+            // Parte superior (Luz)
+            ctx.fillStyle = scaleMid;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, scaleW * 0.35, scaleH * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Reflexo de aresta
+            ctx.strokeStyle = scaleLight;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.restore();
+        };
+
+        // 2. DESENHAR AS PLACAS (Deixando gaps para a energia aparecer)
+        // Testa Central
+        drawScale(0, -size * 0.35, size * 0.4, size * 0.4);
+
+        // Testa Esquerda/Direita
+        drawScale(-size * 0.35, -size * 0.25, size * 0.35, size * 0.35, -0.2);
+        drawScale(size * 0.35, -size * 0.25, size * 0.35, size * 0.35, 0.2);
+
+        // Bochechas Centro
+        drawScale(-size * 0.6, size * 0.1, size * 0.3, size * 0.4, -0.4);
+        drawScale(size * 0.6, size * 0.1, size * 0.3, size * 0.4, 0.4);
+
+        // Bochechas Baixo
+        drawScale(-size * 0.45, size * 0.45, size * 0.3, size * 0.35, -0.2);
+        drawScale(size * 0.45, size * 0.45, size * 0.3, size * 0.35, 0.2);
+
+        // Queixo
+        drawScale(0, size * 0.6, size * 0.4, size * 0.3);
+
+        // Nariz (Centro)
+        ctx.save();
+        ctx.translate(0, size * 0.2);
+        ctx.fillStyle = scaleMid;
         ctx.beginPath();
-        ctx.moveTo(-size * 0.3, -size * 0.6);
-        ctx.quadraticCurveTo(-size * 0.5, -size * 1.2, -size * 0.7, -size * 0.8); // Curva pra fora
-        ctx.lineTo(-size * 0.4, -size * 0.5);
-        ctx.fill();
-        // Anéis do chifre (detalhe)
-        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(-size * 0.4, -size * 0.7); ctx.lineTo(-size * 0.5, -size * 0.8); ctx.stroke();
-
-        // Dir
-        ctx.beginPath();
-        ctx.moveTo(size * 0.3, -size * 0.6);
-        ctx.quadraticCurveTo(size * 0.5, -size * 1.2, size * 0.7, -size * 0.8);
-        ctx.lineTo(size * 0.4, -size * 0.5);
-        ctx.fill();
-        ctx.beginPath(); ctx.moveTo(size * 0.4, -size * 0.7); ctx.lineTo(size * 0.5, -size * 0.8); ctx.stroke();
-
-        // 3. ESCAMAS FACIAIS (Textura)
-        ctx.fillStyle = lightPurple;
-        // Escama testa
-        ctx.beginPath(); ctx.moveTo(0, -size * 0.6); ctx.lineTo(size * 0.2, -size * 0.4); ctx.lineTo(0, -size * 0.2); ctx.lineTo(-size * 0.2, -size * 0.4); ctx.fill();
-        // Escamas bochechas
-        ctx.beginPath(); ctx.arc(-size * 0.5, size * 0.2, size * 0.15, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(size * 0.5, size * 0.2, size * 0.15, 0, Math.PI * 2); ctx.fill();
-
-        // 4. OLHOS (Grandes Pretos Brilhantes)
-        const eyeX = size * 0.35;
-        const eyeY = -size * 0.1;
-        const eyeSize = size * 0.25;
-
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(-eyeX, eyeY, eyeSize, 0, Math.PI * 2);
-        ctx.arc(eyeX, eyeY, eyeSize, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Brilhos
-        ctx.fillStyle = '#FFFFFF';
-        // Esq
-        ctx.beginPath(); ctx.arc(-eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
-        // Dir
-        ctx.beginPath(); ctx.arc(eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
-
-        // 5. NARIZ/FOCINHO
-        ctx.fillStyle = spikePurple; // Roxo mais escuro
-        ctx.beginPath();
-        ctx.ellipse(0, size * 0.35, size * 0.15, size * 0.1, 0, 0, Math.PI * 2);
+        ctx.moveTo(-size * 0.2, -size * 0.1);
+        ctx.lineTo(size * 0.2, -size * 0.1);
+        ctx.lineTo(0, size * 0.2);
         ctx.fill();
         // Narinas
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.arc(-size * 0.08, 0, size * 0.04, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.08, 0, size * 0.04, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+
+        // 3. CHIFRES (Sobrepostos atrás ou na frente)
+        // Desenhar chifres AGORA para ficarem nítidos
+        const drawHorn = (mx, my, rot) => {
+            ctx.save();
+            ctx.translate(mx, my);
+            ctx.rotate(rot);
+            // Gradiente Dourado
+            const grad = ctx.createLinearGradient(-size * 0.1, 0, size * 0.1, 0);
+            grad.addColorStop(0, hornShadow);
+            grad.addColorStop(0.5, hornGold);
+            grad.addColorStop(1, hornShadow);
+            ctx.fillStyle = grad;
+
+            ctx.beginPath();
+            ctx.moveTo(-size * 0.2, 0);
+            ctx.quadraticCurveTo(0, -size * 0.6, 0, -size * 0.8); // Ponta
+            ctx.quadraticCurveTo(size * 0.1, -size * 0.6, size * 0.2, 0);
+            ctx.fill();
+
+            // Anéis
+            ctx.strokeStyle = hornShadow;
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(-size * 0.18, -size * 0.2); ctx.lineTo(size * 0.18, -size * 0.2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-size * 0.12, -size * 0.4); ctx.lineTo(size * 0.12, -size * 0.4); ctx.stroke();
+
+            ctx.restore();
+        };
+
+        drawHorn(-size * 0.4, -size * 0.5, -0.4);
+        drawHorn(size * 0.4, -size * 0.5, 0.4);
+
+
+        // 4. OLHOS KAWAII (Sobrepor tudo)
+        const eyeX = size * 0.35;
+        const eyeY = -size * 0.05;
+        const eyeRadius = size * 0.28;
+
         ctx.fillStyle = '#000000';
         ctx.beginPath();
-        ctx.arc(-size * 0.08, size * 0.35, size * 0.03, 0, Math.PI * 2);
-        ctx.arc(size * 0.08, size * 0.35, size * 0.03, 0, Math.PI * 2);
+        ctx.arc(-eyeX, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.arc(eyeX, eyeY, eyeRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 6. ENERGIA (Raios Ciano)
-        ctx.strokeStyle = energyCyan;
-        ctx.lineWidth = size * 0.05;
-        ctx.shadowColor = energyCyan;
-        ctx.shadowBlur = 10;
-        ctx.lineCap = 'round';
-
+        // Brilho Principal (Grande)
+        ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        // Raio Esq
-        ctx.moveTo(-size * 0.4, size * 0.5);
-        ctx.lineTo(-size * 0.6, size * 0.3);
-        ctx.lineTo(-size * 0.5, 0);
-        ctx.stroke();
+        ctx.arc(-eyeX + eyeRadius * 0.3, eyeY - eyeRadius * 0.3, eyeRadius * 0.35, 0, Math.PI * 2);
+        ctx.arc(eyeX + eyeRadius * 0.3, eyeY - eyeRadius * 0.3, eyeRadius * 0.35, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Raio Dir
+        // Brilho Secundário (Pequeno)
         ctx.beginPath();
-        ctx.moveTo(size * 0.4, size * 0.5);
-        ctx.lineTo(size * 0.6, size * 0.3);
-        ctx.lineTo(size * 0.5, 0);
-        ctx.stroke();
-
-        // Pequeno no topo
-        ctx.beginPath();
-        ctx.moveTo(0, -size * 0.5);
-        ctx.lineTo(0, -size * 0.8);
-        ctx.stroke();
-
-        ctx.shadowBlur = 0; // Reset
-        ctx.restore();
+        ctx.arc(-eyeX - eyeRadius * 0.2, eyeY + eyeRadius * 0.3, eyeRadius * 0.15, 0, Math.PI * 2);
+        ctx.arc(eyeX - eyeRadius * 0.2, eyeY + eyeRadius * 0.3, eyeRadius * 0.15, 0, Math.PI * 2);
+        ctx.fill();
     }
 
     renderHead(ctx, camera) {
