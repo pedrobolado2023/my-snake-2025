@@ -99,7 +99,7 @@ const CONFIG = {
         { id: 'green', name: 'Verde', category: 'BASICO', colors: ['#06ffa5', '#52b788'], pattern: 'solid', unlocked: true, face: { type: 'standard', eyeColor: '#ffffff' } },
         { id: 'tiger', name: 'Tigre', category: 'BASICO', colors: ['#ff8c00', '#000000'], pattern: 'stripes', unlocked: true, face: { type: 'cat', eyeColor: '#ffff00' } },
         { id: 'lime', name: 'Ambiente', category: 'BASICO', colors: ['#c0ff00', '#a0d911'], pattern: 'solid', unlocked: true, face: { type: 'cute', eyeColor: '#000000' } },
-        { id: 'panda', name: 'Pizza', category: 'BASICO', colors: ['#ffffff', '#000000'], pattern: 'panda', unlocked: true, face: { type: 'panda', eyeColor: '#000000' } },
+        { id: 'pizza', name: 'Pizza', category: 'BASICO', colors: ['#ffd700', '#ffa500'], pattern: 'solid', unlocked: true, face: { type: 'pizza', eyeColor: '#000000' } },
 
         // Animais - Padrões inspirados em animais (Tudo desbloqueado)
         { id: 'cobra', name: 'Cobra', category: 'ANIMAIS', colors: ['#1b4d1b', '#2d5016'], pattern: 'scales', unlocked: true, face: { type: 'angry', eyeColor: '#ff0000' } },

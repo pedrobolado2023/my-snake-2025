@@ -614,6 +614,120 @@ class Snake {
         ctx.fill();
     }
 
+    drawPizzaHead(ctx, size) {
+        const crustColor = '#e3a15c'; // Cor da borda/massa assada
+        const cheeseColor = '#ffcc33'; // Amarelo queijo vibrante
+        const cheeseDark = '#fbb117'; // Sombra do queijo
+        const pepperoniColor = '#cc3333'; // Vermelho pepperoni
+        const pepperoniLight = '#ff6666'; // Brilho pepperoni
+        const outlineColor = '#FFFFFF'; // Stroke estilo sticker
+
+        // Contorno Branco Externo (Sticker)
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.lineWidth = size * 0.18;
+        ctx.strokeStyle = outlineColor;
+
+        // PATH GERAL (Triângulo arredondado com gotas)
+        ctx.beginPath();
+        // Canto Superior Esquerdo (Crosta)
+        ctx.moveTo(-size * 0.8, -size * 0.6);
+        // Topo Curvo (Crosta)
+        ctx.quadraticCurveTo(0, -size * 0.8, size * 0.8, -size * 0.6);
+        // Lado Direito descendo com queijo derretido
+        ctx.quadraticCurveTo(size * 0.9, -size * 0.2, size * 0.6, size * 0.2);
+        // Gota de queijo direita
+        ctx.quadraticCurveTo(size * 0.7, size * 0.5, size * 0.5, size * 0.4);
+        // Ponta de baixo (Queixo)
+        ctx.quadraticCurveTo(0, size * 1.1, -size * 0.5, size * 0.4);
+        // Gota de queijo esquerda
+        ctx.quadraticCurveTo(-size * 0.7, size * 0.5, -size * 0.6, size * 0.2);
+        // Lado Esquerdo subindo
+        ctx.quadraticCurveTo(-size * 0.9, -size * 0.2, -size * 0.8, -size * 0.6);
+        ctx.closePath();
+
+        ctx.stroke(); // Contorno branco
+
+        // 1. MASSA/CROSTA (Base)
+        ctx.fillStyle = crustColor;
+        ctx.fill();
+
+        // 2. QUEIJO (Camada interna)
+        ctx.fillStyle = cheeseColor;
+        ctx.beginPath();
+        // Margem da crosta
+        const crustMargin = size * 0.2;
+        ctx.moveTo(-size * 0.7 + crustMargin / 2, -size * 0.6 + crustMargin);
+        // Topo do queijo (acompanha crosta mas mais baixo)
+        ctx.quadraticCurveTo(0, -size * 0.7 + crustMargin, size * 0.7 - crustMargin / 2, -size * 0.6 + crustMargin);
+        // Lado Dir (Derretendo)
+        ctx.quadraticCurveTo(size * 0.8, -size * 0.1, size * 0.55, size * 0.25);
+        ctx.quadraticCurveTo(size * 0.7, size * 0.55, size * 0.45, size * 0.45); // Gota
+        // Ponta
+        ctx.quadraticCurveTo(0, size * 0.9, -size * 0.45, size * 0.45);
+        // Lado Esq (Derretendo)
+        ctx.quadraticCurveTo(-size * 0.7, size * 0.55, -size * 0.55, size * 0.25);
+        ctx.quadraticCurveTo(-size * 0.8, -size * 0.1, -size * 0.7 + crustMargin / 2, -size * 0.6 + crustMargin);
+        ctx.fill();
+
+        // Sombra suave no queijo
+        ctx.fillStyle = cheeseDark;
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.6, 0, Math.PI * 2);
+        ctx.globalCompositeOperation = 'source-atop'; // Só desenha onde já tem queijo
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over'; // Reset
+
+        // 3. PEPPERONIS (Círculos vermelhos)
+        const drawPepperoni = (x, y, r) => {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = pepperoniColor;
+            ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+            // Detalhes internos (textura de carne)
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.beginPath(); ctx.arc(-r * 0.3, -r * 0.2, r * 0.2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(r * 0.2, r * 0.3, r * 0.15, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(r * 0.4, -r * 0.1, r * 0.1, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        };
+
+        drawPepperoni(-size * 0.4, -size * 0.4, size * 0.18); // Esq Topo
+        drawPepperoni(size * 0.4, -size * 0.4, size * 0.18);  // Dir Topo
+        drawPepperoni(0, -size * 0.1, size * 0.15);           // Centro
+        drawPepperoni(-size * 0.3, size * 0.5, size * 0.16);  // Esq Baixo
+        drawPepperoni(size * 0.3, size * 0.5, size * 0.16);   // Dir Baixo
+
+        // 4. ROSTO (Kawaii)
+        const eyeX = size * 0.35;
+        const eyeY = 0; // Centro
+        const eyeSize = size * 0.22;
+
+        // Olhos Pretos
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.arc(eyeX, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Brilhos
+        ctx.fillStyle = '#FFFFFF';
+        // Grandes
+        ctx.beginPath(); ctx.arc(-eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(eyeX + eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.35, 0, Math.PI * 2); ctx.fill();
+        // Pequenos
+        ctx.beginPath(); ctx.arc(-eyeX - eyeSize * 0.2, eyeY + eyeSize * 0.3, eyeSize * 0.15, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(eyeX - eyeSize * 0.2, eyeY + eyeSize * 0.3, eyeSize * 0.15, 0, Math.PI * 2); ctx.fill();
+
+        // Boca (Sorriso pequeno)
+        ctx.strokeStyle = '#4a2c0f'; // Marrom escuro
+        ctx.lineWidth = size * 0.06;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, size * 0.25, size * 0.15, 0, Math.PI); // Meio círculo
+        ctx.stroke();
+    }
+
     renderHead(ctx, camera) {
         const head = this.segments[0];
         if (!head) return;
@@ -644,6 +758,7 @@ class Snake {
             case 'cyclops': this.drawCyclopsFace(ctx, headSize, faceConfig.eyeColor); break;
             case 'cat': this.drawCatFace(ctx, headSize, faceConfig.eyeColor); break;
             case 'panda': this.drawPandaFace(ctx, headSize, faceConfig.eyeColor); break;
+            case 'pizza': this.drawPizzaHead(ctx, headSize); break; // NOVA PIZZA
             case 'bear': // NOVO
                 this.drawBearHead(ctx, headSize);
                 break;
