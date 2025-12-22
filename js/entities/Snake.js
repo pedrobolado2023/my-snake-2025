@@ -782,63 +782,53 @@ class Snake {
     // Utilitário para desenhar olhos expressivos
     drawCartoonEye(ctx, x, y, size, eyeColor, expression = 'normal') {
         const eyeRadius = size * 0.5;
-
         ctx.save();
         ctx.translate(x, y);
 
-        // 1. Esclera (Parte branca do olho)
-        ctx.fillStyle = '#ffffff';
+        // 1. Base do Olho (Preto ou Cor escura)
+        ctx.fillStyle = '#000000';
+
         ctx.beginPath();
         if (expression === 'angry') {
-            // Olho meio fechado em cima
-            ctx.arc(0, 0, eyeRadius, Math.PI, 0); // Semicírculo inferior
-            ctx.lineTo(eyeRadius, -eyeRadius * 0.2);
-            ctx.lineTo(-eyeRadius, -eyeRadius * 0.2);
+            // Semicírculo truncado em cima
+            ctx.arc(0, 0, eyeRadius, Math.PI, 0);
+            ctx.lineTo(eyeRadius, -eyeRadius * 0.3);
+            ctx.lineTo(-eyeRadius, -eyeRadius * 0.3);
         } else if (expression === 'happy') {
-            // Olho sorrindo (arco)
+            // Arco sorrindo
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = size * 0.15;
+            ctx.lineWidth = size * 0.2;
             ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.arc(0, 0, eyeRadius * 0.8, Math.PI * 1.1, Math.PI * 1.9);
+            ctx.moveTo(-eyeRadius * 0.8, 0);
+            ctx.quadraticCurveTo(0, -eyeRadius, eyeRadius * 0.8, 0);
             ctx.stroke();
             ctx.restore();
-            return; // Olho feliz não tem pupila desenhada aqui
+            return;
         } else {
-            // Normal (redondo)
+            // Normal (Redondo)
             ctx.arc(0, 0, eyeRadius, 0, Math.PI * 2);
         }
         ctx.fill();
 
-        // 2. Íris (Cor do olho)
-        if (expression !== 'angry') {
+        // 2. Íris (Se cor for diferente de preto/branco e não for angry)
+        if (expression !== 'angry' && eyeColor !== '#000000' && eyeColor !== '#ffffff') {
             ctx.fillStyle = eyeColor;
+            ctx.globalAlpha = 0.6; // Íris sutil
             ctx.beginPath();
-            ctx.arc(0, 0, eyeRadius * 0.7, 0, Math.PI * 2);
+            ctx.arc(0, size * 0.2, eyeRadius * 0.6, 0, Math.PI * 2);
             ctx.fill();
-        } else {
-            // Íris menor para raiva
-            ctx.fillStyle = eyeColor;
-            ctx.beginPath();
-            ctx.arc(0, 0, eyeRadius * 0.6, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.globalAlpha = 1.0;
         }
 
-        // 3. Pupila (Preto)
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(0, 0, eyeRadius * 0.4, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4. Brilho (Reflexo branco - Essencial para "fofura")
+        // 3. Brilhos (Essencial!)
         ctx.fillStyle = '#ffffff';
+        // Brilho Grande
         ctx.beginPath();
-        // Brilho principal
-        ctx.arc(-eyeRadius * 0.3, -eyeRadius * 0.3, eyeRadius * 0.25, 0, Math.PI * 2);
+        ctx.arc(-eyeRadius * 0.3, -eyeRadius * 0.3, eyeRadius * 0.35, 0, Math.PI * 2);
         ctx.fill();
-        // Brilho secundário menor
+        // Brilho Pequeno
         ctx.beginPath();
-        ctx.arc(eyeRadius * 0.2, eyeRadius * 0.2, eyeRadius * 0.1, 0, Math.PI * 2);
+        ctx.arc(eyeRadius * 0.2, eyeRadius * 0.3, eyeRadius * 0.15, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
@@ -846,244 +836,270 @@ class Snake {
 
     // Rosto Padrão (Olhos grandes e fofos)
     drawStandardFace(ctx, size, color) {
+        // Contorno Branco Sticker
+        ctx.lineWidth = size * 0.18;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2); ctx.stroke();
+
         const eyeSpacing = size * 0.35;
-        this.drawCartoonEye(ctx, -eyeSpacing, -size * 0.1, size * 0.6, color || '#000000');
-        this.drawCartoonEye(ctx, eyeSpacing, -size * 0.1, size * 0.6, color || '#000000');
+        this.drawCartoonEye(ctx, -eyeSpacing, -size * 0.1, size * 0.7, color || '#000000');
+        this.drawCartoonEye(ctx, eyeSpacing, -size * 0.1, size * 0.7, color || '#000000');
     }
 
     // Rosto Fofo (Cute)
     drawCuteFace(ctx, size, color) {
-        const eyeSpacing = size * 0.35;
-        this.drawCartoonEye(ctx, -eyeSpacing, -size * 0.1, size * 0.7, color || '#00bfff');
-        this.drawCartoonEye(ctx, eyeSpacing, -size * 0.1, size * 0.7, color || '#00bfff');
+        this.drawStandardFace(ctx, size, color);
 
         // Bochechas rosadas
-        ctx.fillStyle = 'rgba(255, 182, 193, 0.6)'; // Rosa transparente
+        ctx.fillStyle = 'rgba(255, 105, 180, 0.6)'; // Rosa transparente
         ctx.beginPath();
-        ctx.arc(-size * 0.6, size * 0.3, size * 0.2, 0, Math.PI * 2);
+        ctx.arc(-size * 0.6, size * 0.25, size * 0.18, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(size * 0.6, size * 0.3, size * 0.2, 0, Math.PI * 2);
+        ctx.arc(size * 0.6, size * 0.25, size * 0.18, 0, Math.PI * 2);
         ctx.fill();
 
         // Boca pequena sorrindo
-        ctx.strokeStyle = '#000000';
+        ctx.strokeStyle = '#4a2c0f';
         ctx.lineWidth = size * 0.05;
         ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(0, size * 0.3, size * 0.15, 0, Math.PI);
+        ctx.arc(0, size * 0.2, size * 0.1, 0, Math.PI);
         ctx.stroke();
     }
 
     // Rosto Bravo (Angry)
     drawAngryFace(ctx, size, color) {
+        // Contorno Branco
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2); ctx.stroke();
+
         const eyeSpacing = size * 0.35;
-        this.drawCartoonEye(ctx, -eyeSpacing, 0, size * 0.55, color || '#ff0000', 'angry');
-        this.drawCartoonEye(ctx, eyeSpacing, 0, size * 0.55, color || '#ff0000', 'angry');
+        this.drawCartoonEye(ctx, -eyeSpacing, 0, size * 0.65, color || '#ff0000', 'angry');
+        this.drawCartoonEye(ctx, eyeSpacing, 0, size * 0.65, color || '#ff0000', 'angry');
 
         // Sobrancelhas franzidas
         ctx.fillStyle = '#000000';
         ctx.beginPath();
-        // Esq
-        ctx.moveTo(-eyeSpacing - size * 0.4, -size * 0.3);
-        ctx.lineTo(-eyeSpacing + size * 0.1, -size * 0.1);
-        ctx.lineTo(-eyeSpacing - size * 0.4, -size * 0.2);
-        ctx.fill();
-        // Dir
-        ctx.beginPath();
-        ctx.moveTo(eyeSpacing + size * 0.4, -size * 0.3);
-        ctx.lineTo(eyeSpacing - size * 0.1, -size * 0.1);
-        ctx.lineTo(eyeSpacing + size * 0.4, -size * 0.2);
-        ctx.fill();
+        ctx.moveTo(-size * 0.8, -size * 0.4); ctx.lineTo(-size * 0.2, -size * 0.1); ctx.lineTo(-size * 0.8, -size * 0.2); ctx.fill();
+        ctx.moveTo(size * 0.8, -size * 0.4); ctx.lineTo(size * 0.2, -size * 0.1); ctx.lineTo(size * 0.8, -size * 0.2); ctx.fill();
     }
 
     drawHappyFace(ctx, size, color) {
-        const eyeSpacing = size * 0.35;
-        this.drawCartoonEye(ctx, -eyeSpacing, -size * 0.1, size * 0.6, color, 'happy');
-        this.drawCartoonEye(ctx, eyeSpacing, -size * 0.1, size * 0.6, color, 'happy');
+        // Contorno Branco
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2); ctx.stroke();
 
-        // Boca grande sorrindo
-        ctx.fillStyle = '#330000';
+        const eyeSpacing = size * 0.35;
+        this.drawCartoonEye(ctx, -eyeSpacing, -size * 0.15, size * 0.65, color, 'happy');
+        this.drawCartoonEye(ctx, eyeSpacing, -size * 0.15, size * 0.65, color, 'happy');
+
+        // Boca Aberta Rindo
+        ctx.fillStyle = '#4a2c0f';
         ctx.beginPath();
-        ctx.arc(0, size * 0.2, size * 0.3, 0, Math.PI);
+        ctx.moveTo(-size * 0.3, size * 0.3);
+        ctx.quadraticCurveTo(0, size * 0.7, size * 0.3, size * 0.3);
         ctx.fill();
-        // Língua
+
+        // Lingua
         ctx.fillStyle = '#ff6b6b';
-        ctx.beginPath();
-        ctx.arc(0, size * 0.4, size * 0.15, 0, Math.PI);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(0, size * 0.5, size * 0.1, 0, Math.PI * 2); ctx.fill();
     }
 
     drawCyclopsFace(ctx, size, color) {
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2); ctx.stroke();
         // Olho único gigante
-        this.drawCartoonEye(ctx, 0, 0, size * 1.0, color || '#ffff00');
+        this.drawCartoonEye(ctx, 0, -size * 0.1, size * 1.3, color || '#ffff00');
     }
 
     drawCatFace(ctx, size, color) {
-        // Orelhas Pontudas (Topo Y-)
-        ctx.fillStyle = this.skin.colors[0]; // Cor do corpo
+        const furColor = this.skin.colors[0];
+
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+
+        // Cabeça com Orelhas Sticke
         ctx.beginPath();
-        // Esq
-        ctx.moveTo(-size * 0.5, -size * 0.5);
-        ctx.lineTo(-size * 0.8, -size * 1.2);
-        ctx.lineTo(-size * 0.2, -size * 0.8);
-        ctx.fill();
-        // Dir
-        ctx.beginPath();
-        ctx.moveTo(size * 0.5, -size * 0.5);
-        ctx.lineTo(size * 0.8, -size * 1.2);
-        ctx.lineTo(size * 0.2, -size * 0.8);
+        ctx.moveTo(-size * 0.4, -size * 0.4);
+        ctx.lineTo(-size * 0.7, -size * 0.9); ctx.lineTo(-size * 0.2, -size * 0.6); // Orelha Esq
+        ctx.quadraticCurveTo(0, -size * 0.6, size * 0.2, -size * 0.6); // Topo
+        ctx.lineTo(size * 0.7, -size * 0.9); ctx.lineTo(size * 0.4, -size * 0.4); // Orelha Dir
+        ctx.quadraticCurveTo(size * 0.9, 0, size * 0.8, size * 0.5); // Lado Dir
+        ctx.quadraticCurveTo(0, size * 0.9, -size * 0.8, size * 0.5); // Queixo
+        ctx.quadraticCurveTo(-size * 0.9, 0, -size * 0.4, -size * 0.4); // Lado Esq
+        ctx.closePath();
+
+        ctx.stroke();
+        ctx.fillStyle = furColor;
         ctx.fill();
 
         // Interior Orelhas
-        ctx.fillStyle = '#FFB6C1';
-        ctx.beginPath();
-        // Esq
-        ctx.moveTo(-size * 0.5, -size * 0.6); ctx.lineTo(-size * 0.7, -size * 1.0); ctx.lineTo(-size * 0.3, -size * 0.7);
-        ctx.fill();
-        // Dir
-        ctx.beginPath();
-        ctx.moveTo(size * 0.5, -size * 0.6); ctx.lineTo(size * 0.7, -size * 1.0); ctx.lineTo(size * 0.3, -size * 0.7);
-        ctx.fill();
+        ctx.fillStyle = '#ff99cc';
+        ctx.beginPath(); ctx.moveTo(-size * 0.4, -size * 0.5); ctx.lineTo(-size * 0.6, -size * 0.8); ctx.lineTo(-size * 0.3, -size * 0.6); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(size * 0.4, -size * 0.5); ctx.lineTo(size * 0.6, -size * 0.8); ctx.lineTo(size * 0.3, -size * 0.6); ctx.fill();
 
-        // Olhos de Gato (Fendidos)
-        const eyeSpacing = size * 0.35;
-        const eyeSize = size * 0.25;
+        // Olhos Kawaii
+        this.drawCartoonEye(ctx, -size * 0.35, 0, size * 0.65, '#000000');
+        this.drawCartoonEye(ctx, size * 0.35, 0, size * 0.65, '#000000');
 
-        // Esclera
-        ctx.fillStyle = color || '#FFFF00';
-        ctx.beginPath();
-        ctx.arc(-eyeSpacing, -size * 0.1, eyeSize, 0, Math.PI * 2);
-        ctx.arc(eyeSpacing, -size * 0.1, eyeSize, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Pupila Fendida Vertical
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.ellipse(-eyeSpacing, -size * 0.1, eyeSize * 0.3, eyeSize * 0.8, 0, 0, Math.PI * 2);
-        ctx.ellipse(eyeSpacing, -size * 0.1, eyeSize * 0.3, eyeSize * 0.8, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Focinho (Nariz Y+)
-        ctx.fillStyle = '#FFB6C1';
-        ctx.beginPath();
-        ctx.moveTo(-size * 0.15, size * 0.3);
-        ctx.lineTo(size * 0.15, size * 0.3);
-        ctx.lineTo(0, size * 0.45);
-        ctx.fill();
+        // Focinho
+        ctx.fillStyle = '#ff99cc';
+        ctx.beginPath(); ctx.ellipse(0, size * 0.3, size * 0.1, size * 0.06, 0, 0, Math.PI * 2); ctx.fill();
 
         // Bigodes
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#000000'; ctx.lineWidth = 2;
         ctx.beginPath();
-        // Esq
-        ctx.moveTo(-size * 0.2, size * 0.35); ctx.lineTo(-size * 1.0, size * 0.25);
-        ctx.moveTo(-size * 0.2, size * 0.4); ctx.lineTo(-size * 1.0, size * 0.45);
-        // Dir
-        ctx.moveTo(size * 0.2, size * 0.35); ctx.lineTo(size * 1.0, size * 0.25);
-        ctx.moveTo(size * 0.2, size * 0.4); ctx.lineTo(size * 1.0, size * 0.45);
+        ctx.moveTo(-size * 0.2, size * 0.35); ctx.lineTo(-size * 0.6, size * 0.3);
+        ctx.moveTo(-size * 0.2, size * 0.4); ctx.lineTo(-size * 0.6, size * 0.45);
+        ctx.moveTo(size * 0.2, size * 0.35); ctx.lineTo(size * 0.6, size * 0.3);
+        ctx.moveTo(size * 0.2, size * 0.4); ctx.lineTo(size * 0.6, size * 0.45);
         ctx.stroke();
     }
 
     drawPandaFace(ctx, size, color) {
-        const eyeOffset = size * 0.4;
-        const eyeSize = size * 0.25;
+        const whiteFur = '#FFFFFF';
+        const blackFur = '#000000';
 
-        // Manchas pretas
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.ellipse(eyeOffset, -eyeOffset / 2, eyeSize * 1.5, eyeSize * 1.2, Math.PI / 4, 0, Math.PI * 2);
-        ctx.ellipse(eyeOffset, eyeOffset / 2, eyeSize * 1.5, eyeSize * 1.2, -Math.PI / 4, 0, Math.PI * 2);
-        ctx.fill();
+        // Orelhas Pretas (Atrás)
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.save();
+        ctx.fillStyle = blackFur;
+        ctx.beginPath(); ctx.arc(-size * 0.7, -size * 0.6, size * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(size * 0.7, -size * 0.6, size * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.restore();
 
-        // Olhos brancos
-        this.drawStandardFace(ctx, size, '#ffffff');
+        // Cabeça Branca (Frente)
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = whiteFur; ctx.fill();
+
+        // Manchas
+        ctx.fillStyle = blackFur;
+        ctx.beginPath(); ctx.ellipse(-size * 0.35, 0, size * 0.25, size * 0.2, -Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size * 0.35, 0, size * 0.25, size * 0.2, Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+
+        // Olhos Brilhantes (sobre o preto)
+        const eyeY = -size * 0.05;
+        ctx.fillStyle = 'white';
+        ctx.beginPath(); ctx.arc(-size * 0.3, eyeY - size * 0.05, size * 0.08, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-size * 0.4, eyeY + size * 0.05, size * 0.04, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.3, eyeY - size * 0.05, size * 0.08, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.4, eyeY + size * 0.05, size * 0.04, 0, Math.PI * 2); ctx.fill();
+
+        // Nariz
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.ellipse(0, size * 0.4, size * 0.1, size * 0.06, 0, 0, Math.PI * 2); ctx.fill();
     }
 
     drawCoolFace(ctx, size) {
-        const eyeOffset = size * 0.4;
-        const width = size * 0.4;
-        const height = size * 0.6;
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2); ctx.stroke();
 
-        // Óculos escuros
+        // Óculos Aviador
         ctx.fillStyle = '#000000';
-        ctx.shadowBlur = 2;
-        ctx.shadowColor = '#000000';
-
         ctx.beginPath();
-        // Lente esquerda
-        ctx.rect(eyeOffset - width / 2, -height / 2 - 2, width, height / 2);
-        // Lente direita
-        ctx.rect(eyeOffset - width / 2, 2, width, height / 2);
-        // Haste central
-        ctx.rect(eyeOffset - width / 2, -2, width / 2, 4);
+        // Lente Esq
+        ctx.moveTo(-size * 0.05, -size * 0.2);
+        ctx.quadraticCurveTo(-size * 0.4, -size * 0.2, -size * 0.4, size * 0.1);
+        ctx.quadraticCurveTo(-size * 0.2, size * 0.4, -size * 0.05, size * 0.1);
+        // Lente Dir
+        ctx.moveTo(size * 0.05, -size * 0.2);
+        ctx.quadraticCurveTo(size * 0.4, -size * 0.2, size * 0.4, size * 0.1);
+        ctx.quadraticCurveTo(size * 0.2, size * 0.4, size * 0.05, size * 0.1);
         ctx.fill();
 
-        // Brilho no óculos
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        // Haste
+        ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(-size * 0.05, -size * 0.2); ctx.lineTo(size * 0.05, -size * 0.2); ctx.stroke();
+
+        // Reflexo
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
         ctx.beginPath();
-        ctx.moveTo(eyeOffset + width / 2, -height / 2);
-        ctx.lineTo(eyeOffset - width / 2, -height / 4);
-        ctx.lineTo(eyeOffset + width / 2, 0);
-        ctx.fill();
+        ctx.moveTo(-size * 0.3, -size * 0.1); ctx.lineTo(-size * 0.1, -size * 0.1); ctx.lineTo(-size * 0.3, size * 0.1); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(size * 0.1, -size * 0.1); ctx.lineTo(size * 0.3, -size * 0.1); ctx.lineTo(size * 0.1, size * 0.1); ctx.fill();
+
+        // Sorriso
+        ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(-size * 0.2, size * 0.5); ctx.quadraticCurveTo(0, size * 0.6, size * 0.2, size * 0.45); ctx.stroke();
     }
 
     drawAlienFace(ctx, size, color) {
-        const eyeOffset = size * 0.3;
-        const eyeSize = size * 0.4;
+        const alienColor = '#66ff66';
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+        ctx.lineJoin = 'round';
 
-        // Olhos grandes e inclinados
-        ctx.fillStyle = color; // Preto ou escuro para alien? Ou cor brilhante? Config diz ciano.
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = color;
-
+        // Cabeça Pera
         ctx.beginPath();
-        // Esquerdo
-        ctx.ellipse(eyeOffset, -eyeOffset / 2, eyeSize, eyeSize * 0.6, -Math.PI / 6, 0, Math.PI * 2);
-        // Direito
-        ctx.ellipse(eyeOffset, eyeOffset / 2, eyeSize, eyeSize * 0.6, Math.PI / 6, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(0, size * 0.8);
+        ctx.quadraticCurveTo(size * 0.7, size * 0.3, size * 0.8, -size * 0.5);
+        ctx.quadraticCurveTo(0, -size * 1.0, -size * 0.8, -size * 0.5);
+        ctx.quadraticCurveTo(-size * 0.7, size * 0.3, 0, size * 0.8);
+        ctx.closePath();
+
+        ctx.stroke();
+        ctx.fillStyle = color || alienColor; ctx.fill();
+
+        // Olhos Alien
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.ellipse(-size * 0.35, -size * 0.1, size * 0.25, size * 0.4, -Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size * 0.35, -size * 0.1, size * 0.25, size * 0.4, Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+
+        // Brilho
+        ctx.fillStyle = 'white';
+        ctx.beginPath(); ctx.arc(-size * 0.4, -size * 0.2, size * 0.05, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.4, -size * 0.2, size * 0.05, 0, Math.PI * 2); ctx.fill();
     }
 
     drawCowHead(ctx, size) {
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+
+        // Cabeça quadrada arredondada
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.7, -size * 0.6);
+        ctx.lineTo(size * 0.7, -size * 0.6); // Topo
+        ctx.quadraticCurveTo(size * 0.9, -size * 0.6, size * 0.9, 0); // Dir
+        ctx.quadraticCurveTo(size * 0.9, size * 0.8, size * 0.5, size * 0.8); // Baixo Dir
+        ctx.lineTo(-size * 0.5, size * 0.8); // Baixo Esq
+        ctx.quadraticCurveTo(-size * 0.9, size * 0.8, -size * 0.9, 0); // Esq
+        ctx.quadraticCurveTo(-size * 0.9, -size * 0.6, -size * 0.7, -size * 0.6);
+        ctx.closePath();
+
+        ctx.stroke();
+        ctx.fillStyle = '#FFFFFF'; // Branca
+        ctx.fill();
+
+        // Manchas Pretas
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.moveTo(size * 0.9, -size * 0.4); ctx.arc(size * 0.9, -size * 0.4, size * 0.4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(-size * 0.9, 0.2); ctx.arc(-size * 0.8, size * 0.2, size * 0.3, 0, Math.PI * 2); ctx.fill();
+
         // Chifres
-        ctx.fillStyle = '#D3D3D3'; // Cinza claro
-        ctx.beginPath();
-        // Chifre esquerdo
-        ctx.moveTo(-size * 0.4, -size * 0.6);
-        ctx.quadraticCurveTo(-size * 0.8, -size * 1.0, -size * 0.9, -size * 0.4); // Curva pra fora e cima
-        ctx.lineTo(-size * 0.6, -size * 0.4);
-        ctx.fill();
-        // Chifre direito
-        ctx.beginPath();
-        ctx.moveTo(size * 0.4, -size * 0.6);
-        ctx.quadraticCurveTo(size * 0.8, -size * 1.0, size * 0.9, -size * 0.4);
-        ctx.lineTo(size * 0.6, -size * 0.4);
-        ctx.fill();
+        ctx.fillStyle = '#e0e0e0';
+        ctx.beginPath(); ctx.moveTo(-size * 0.7, -size * 0.6); ctx.lineTo(-size * 0.9, -size * 0.9); ctx.lineTo(-size * 0.5, -size * 0.7); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(size * 0.7, -size * 0.6); ctx.lineTo(size * 0.9, -size * 0.9); ctx.lineTo(size * 0.5, -size * 0.7); ctx.fill();
 
-        // Orelhas de vaca (Laterais)
-        ctx.fillStyle = this.skin.colors[1] || '#000000';
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.8, -size * 0.2, size * 0.3, size * 0.2, -Math.PI / 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(size * 0.8, -size * 0.2, size * 0.3, size * 0.2, Math.PI / 6, 0, Math.PI * 2);
-        ctx.fill();
+        // Orelhas
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.ellipse(-size * 0.95, -size * 0.3, size * 0.25, size * 0.15, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size * 0.95, -size * 0.3, size * 0.25, size * 0.15, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
 
-        // Focinho largo (Baixo)
-        ctx.fillStyle = '#FFB6C1'; // Rosa claro
+        // Focinho Rosa
+        ctx.fillStyle = '#ffb6c1';
         ctx.beginPath();
-        ctx.ellipse(0, size * 0.4, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
+        ctx.moveTo(-size * 0.6, size * 0.3);
+        ctx.lineTo(size * 0.6, size * 0.3);
+        ctx.quadraticCurveTo(size * 0.6, size * 0.8, 0, size * 0.8);
+        ctx.quadraticCurveTo(-size * 0.6, size * 0.8, -size * 0.6, size * 0.3);
         ctx.fill();
 
         // Narinas
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(-size * 0.2, size * 0.4, size * 0.08, 0, Math.PI * 2);
-        ctx.arc(size * 0.2, size * 0.4, size * 0.08, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.arc(-size * 0.3, size * 0.55, size * 0.06, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.3, size * 0.55, size * 0.06, 0, Math.PI * 2); ctx.fill();
 
-        // Olhos
+        // Olhos Sticker
         this.drawStandardFace(ctx, size, '#000000');
     }
 
@@ -1250,107 +1266,141 @@ class Snake {
     }
 
     drawRabbitHead(ctx, size) {
-        // Orelhas longas para Cima
-        ctx.fillStyle = this.skin.colors[0];
-        const earLength = size * 1.5;
-        const earWidth = size * 0.3;
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
 
+        // Orelhas Longas (Devem fazer parte do stroke)
         ctx.beginPath();
-        // Esquerda
-        ctx.ellipse(-size * 0.4, -size * 0.8, earWidth, earLength, -Math.PI / 12, 0, Math.PI * 2);
-        ctx.fill();
-        // Direita
-        ctx.beginPath();
-        ctx.ellipse(size * 0.4, -size * 0.8, earWidth, earLength, Math.PI / 12, 0, Math.PI * 2);
-        ctx.fill();
+        // Orelha Esq
+        ctx.moveTo(-size * 0.3, -size * 0.5);
+        ctx.lineTo(-size * 0.4, -size * 1.3); // Ponta
+        ctx.quadraticCurveTo(-size * 0.1, -size * 1.3, -size * 0.1, -size * 0.5);
+        // Topo cabeça
+        ctx.lineTo(size * 0.1, -size * 0.5);
+        // Orelha Dir
+        ctx.lineTo(size * 0.1, -size * 1.3);
+        ctx.quadraticCurveTo(size * 0.4, -size * 1.3, size * 0.3, -size * 0.5);
+        // Cabeça Lados
+        ctx.quadraticCurveTo(size * 0.8, -size * 0.3, size * 0.8, size * 0.3);
+        ctx.quadraticCurveTo(0, size * 1.0, -size * 0.8, size * 0.3);
+        ctx.quadraticCurveTo(-size * 0.8, -size * 0.3, -size * 0.3, -size * 0.5);
+        ctx.closePath();
 
-        // Interior das orelhas
-        ctx.fillStyle = '#FFC0CB';
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.4, -size * 0.8, earWidth * 0.6, earLength * 0.7, -Math.PI / 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(size * 0.4, -size * 0.8, earWidth * 0.6, earLength * 0.7, Math.PI / 12, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Narizinho (Centro/Baixo)
-        ctx.fillStyle = '#FF69B4';
-        ctx.beginPath();
-        ctx.arc(0, size * 0.3, size * 0.15, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = this.skin.colors[0]; // Cor do coelho
         ctx.fill();
 
-        // Olhos
-        this.drawCuteFace(ctx, size, '#000000');
-    }
-
-    drawBearHead(ctx, size) {
-        // Orelhas redondas (Topo cantos)
-        ctx.fillStyle = this.skin.colors[1] || this.skin.colors[0];
-        const earSize = size * 0.35;
-        ctx.beginPath();
-        ctx.arc(-size * 0.6, -size * 0.6, earSize, 0, Math.PI * 2); // Esq
-        ctx.arc(size * 0.6, -size * 0.6, earSize, 0, Math.PI * 2); // Dir
-        ctx.fill();
-
-        // Focinho (Baixo)
-        ctx.fillStyle = '#D2B48C'; // Tan
-        ctx.beginPath();
-        ctx.ellipse(0, size * 0.3, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
-        ctx.fill();
+        // Interior Orelhas
+        ctx.fillStyle = '#ffccdd';
+        ctx.beginPath(); ctx.ellipse(-size * 0.25, -size * 0.9, size * 0.08, size * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size * 0.25, -size * 0.9, size * 0.08, size * 0.2, 0, 0, Math.PI * 2); ctx.fill();
 
         // Nariz
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(0, size * 0.25, size * 0.15, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#ff69b4';
+        ctx.beginPath(); ctx.arc(0, size * 0.3, size * 0.1, 0, Math.PI * 2); ctx.fill();
+
+        // Dentes
+        ctx.fillStyle = 'white';
+        ctx.fillRect(-size * 0.1, size * 0.4, size * 0.08, size * 0.12);
+        ctx.fillRect(size * 0.02, size * 0.4, size * 0.08, size * 0.12);
 
         // Olhos
         this.drawStandardFace(ctx, size, '#000000');
     }
 
-    drawLionHead(ctx, size) {
-        // Juba
-        ctx.fillStyle = '#8B4513'; // SaddleBrown
+    drawBearHead(ctx, size) {
+        const furColor = this.skin.colors[1] || this.skin.colors[0];
+        const muzzleColor = '#e3c6a0';
+
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+
+        // Cabeça redonda com orelhas arredondadas (Path contínuo para stroke perfeito)
         ctx.beginPath();
-        // Juba ao redor da cabeça
-        ctx.arc(0, 0, size * 1.4, 0, Math.PI * 2);
+        ctx.moveTo(-size * 0.4, -size * 0.5); // Base orelha esq
+        ctx.quadraticCurveTo(-size * 0.8, -size * 0.9, -size * 0.9, -size * 0.4); // Orelha esq
+        ctx.quadraticCurveTo(-size * 0.9, 0, -size * 0.7, size * 0.5); // Lado esq
+        ctx.quadraticCurveTo(0, size * 0.9, size * 0.7, size * 0.5); // Queixo
+        ctx.quadraticCurveTo(size * 0.9, 0, size * 0.9, -size * 0.4); // Lado dir
+        ctx.quadraticCurveTo(size * 0.8, -size * 0.9, size * 0.4, -size * 0.5); // Orelha dir
+        ctx.quadraticCurveTo(0, -size * 0.6, -size * 0.4, -size * 0.5); // Topo
+        ctx.closePath();
+
+        ctx.stroke();
+        ctx.fillStyle = furColor;
         ctx.fill();
 
-        // Rosto (Centro)
-        ctx.fillStyle = this.skin.colors[0]; // Dourado
-        ctx.beginPath();
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.fill();
+        // Orelhas internas (redondas)
+        ctx.fillStyle = 'rgba(0,0,0,0.2)'; // Sombra escura
+        ctx.beginPath(); ctx.arc(-size * 0.65, -size * 0.6, size * 0.1, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.65, -size * 0.6, size * 0.1, 0, Math.PI * 2); ctx.fill();
 
         // Focinho
-        ctx.fillStyle = '#F4A460'; // SandyBrown
-        ctx.beginPath();
-        ctx.ellipse(0, size * 0.3, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = muzzleColor;
+        ctx.beginPath(); ctx.ellipse(0, size * 0.35, size * 0.35, size * 0.25, 0, 0, Math.PI * 2); ctx.fill();
 
         // Nariz
-        ctx.fillStyle = '#000000';
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.ellipse(0, size * 0.25, size * 0.12, size * 0.08, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Olhos Kawaii
+        this.drawStandardFace(ctx, size, '#000000');
+    }
+
+    drawLionHead(ctx, size) {
+        const maneColor = '#c65102'; // Marrom avermelhado
+        const faceColor = '#fecb4e'; // Dourado
+
+        ctx.lineWidth = size * 0.18; ctx.strokeStyle = '#FFFFFF';
+
+        // Juba (Círculo irregular ou flor - simplificado para sticker como círculo grande)
         ctx.beginPath();
-        ctx.moveTo(-size * 0.15, size * 0.2);
-        ctx.lineTo(size * 0.15, size * 0.2);
-        ctx.lineTo(0, size * 0.4);
+        // Juba ondulada
+        const segments = 12;
+        for (let i = 0; i <= segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            const r = size * 1.15;
+            const px = Math.cos(angle) * r;
+            const py = Math.sin(angle) * r;
+            if (i === 0) ctx.moveTo(px, py);
+            else {
+                // Ponto de controle para curva (mais para dentro)
+                const prevAngle = ((i - 0.5) / segments) * Math.PI * 2;
+                const cr = size * 1.0;
+                const cx = Math.cos(prevAngle) * cr;
+                const cy = Math.sin(prevAngle) * cr;
+                ctx.quadraticCurveTo(cx, cy, px, py);
+            }
+        }
+        ctx.closePath();
+
+        ctx.stroke();
+        ctx.fillStyle = maneColor;
         ctx.fill();
 
-        // Olhos felinos
-        const eyeSpacing = size * 0.35;
-        const eyeSize = size * 0.25;
-        // Esclera
-        ctx.fillStyle = '#FFFF00';
-        ctx.beginPath();
-        ctx.arc(-eyeSpacing, -size * 0.1, eyeSize, 0, Math.PI * 2);
-        ctx.arc(eyeSpacing, -size * 0.1, eyeSize, 0, Math.PI * 2);
+        // Rosto
+        ctx.beginPath(); ctx.arc(0, size * 0.1, size * 0.65, 0, Math.PI * 2);
+        ctx.fillStyle = faceColor;
         ctx.fill();
-        // Pupila
-        ctx.fillStyle = '#000000';
+
+        // Orelhas
+        ctx.fillStyle = faceColor;
+        ctx.beginPath(); ctx.arc(-size * 0.5, -size * 0.4, size * 0.18, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.5, -size * 0.4, size * 0.18, 0, Math.PI * 2); ctx.fill();
+
+        // Focinho branco
+        ctx.fillStyle = '#fff4e6';
+        ctx.beginPath(); ctx.ellipse(0, size * 0.45, size * 0.25, size * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Nariz
+        ctx.fillStyle = '#5c3a21';
         ctx.beginPath();
-        ctx.ellipse(-eyeSpacing, -size * 0.1, eyeSize * 0.3, eyeSize * 0.8, 0, 0, Math.PI * 2);
-        ctx.ellipse(eyeSpacing, -size * 0.1, eyeSize * 0.3, eyeSize * 0.8, 0, 0, Math.PI * 2);
+        // Triângulo invertido arredondado
+        ctx.moveTo(-size * 0.15, size * 0.35);
+        ctx.quadraticCurveTo(0, size * 0.3, size * 0.15, size * 0.35);
+        ctx.quadraticCurveTo(0, size * 0.6, -size * 0.15, size * 0.35);
         ctx.fill();
+
+        // Olhos Kawaii
+        this.drawStandardFace(ctx, size * 0.9, '#000000'); // Olhos levemente menores
     }
     renderName(ctx, camera) {
         const head = this.segments[0];
