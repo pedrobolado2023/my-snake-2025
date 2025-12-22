@@ -194,7 +194,7 @@ class Snake {
     render(ctx, camera) {
         if (this.isDead || this.segments.length === 0) return;
 
-        // Proteção: Garantir que a skin tem cores válidas
+        // Proteção: Garantir cores válidas
         const skinColors = (this.skin && this.skin.colors && this.skin.colors.length > 0)
             ? this.skin.colors
             : ['#ffffff', '#cccccc'];
@@ -204,94 +204,108 @@ class Snake {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // Calcular LOD e tamanhos fora do loop
-        // Calcular LOD e tamanhos fora do loop
+        // Cálculos de tamanho e LOD
         const baseSize = CONFIG.SNAKE_SEGMENT_SIZE;
-        // Crescimento linear suave (sem Math.floor) para evitar "piscar" ao crescer
         const growthFactor = (this.segments.length / 20) * 0.8;
-        const maxGrowth = 80; // Limite menor para não ficar muito gorda
+        const maxGrowth = 80;
         const growthSize = baseSize + Math.min(growthFactor, maxGrowth);
+        const currentSize = growthSize * camera.zoom; // Tamanho visual na tela
 
-        // OTIMIZAÇÃO DE RENDERIZAÇÃO ⚡
-        // Calcular "step" (pulo) baseado no zoom e comprimento
-        // Se a cobra for muito longa, aumentamos o step para desenhar menos círculos
-        // Isso evita desenhar 5000 segmentos num loop
+        // Step (pulo) para não desenhar todos os segmentos
         let step = Math.max(1, Math.floor((growthSize * 0.5) / CONFIG.SNAKE_SEGMENT_SPACING));
+        if (camera.zoom < 0.5 || this.segments.length > 500) step = Math.ceil(step * 1.5);
+        if (this.segments.length > 1000) step = Math.ceil(step * 2);
 
-        // Se estiver muito longe (zoom baixo) ou cobra muito grande, pular mais
-        if (camera.zoom < 0.5 || this.segments.length > 500) {
-            step = Math.ceil(step * 1.5);
-        }
-        if (this.segments.length > 1000) {
-            step = Math.ceil(step * 2); // Desenha metade dos segmentos
+        // 1. OTIMIZAÇÃO: Pré-calcular Gradientes (Cache de Frame)
+        // Em vez de criar gradientes no loop, cria um mapa de gradientes para as cores da skin.
+        // Gradientes são criados em (0,0) com raio 'currentSize'.
+
+        const gradientCache = [];
+
+        // Identificar se precisamos de múltiplas cores ou só a primeira
+        const isMultiColor = ['stripes', 'rainbow', 'scales', 'camo', 'metallic', 'lava', 'electric', 'neon', 'shadow', 'cosmic', 'rainbow_premium'].includes(skinPattern);
+
+        // Quantas variações criar? Se for sólido, 1. Se multi, colors.length.
+        const numVariations = isMultiColor ? skinColors.length : 1;
+
+        for (let i = 0; i < numVariations; i++) {
+            const c1 = skinColors[i];
+            let c2;
+            try {
+                // Tenta pegar a próxima cor para degradê ou escurece a atual
+                if (skinColors.length > 1 && !isMultiColor) {
+                    c2 = skinColors[1]; // Gradiente simples de 2 cores
+                } else {
+                    c2 = Utils.darkenColor(c1, 40);
+                }
+            } catch (e) { c2 = c1; }
+
+            const grad = ctx.createRadialGradient(
+                -currentSize * 0.2, -currentSize * 0.2, currentSize * 0.1, // Luz deslocada
+                0, 0, currentSize
+            );
+            grad.addColorStop(0, '#ffffff'); // Brilho especular
+            grad.addColorStop(0.3, c1);
+            grad.addColorStop(1, c2);      // Sombra
+
+            gradientCache.push(grad);
         }
 
-        // Renderizar brilho (glow) intenso se for player ou estiver perto
-        if (this.isPlayer || camera.zoom > 0.6) {
-            // Glow reduzido para menos ofuscação
+        // 2. Renderizar GLOW (Opcional, apenas se for player ou perto)
+        // Otimização: Só desenhar glow se não tiver muitos segmentos visíveis ou qualidade alta
+        if ((this.isPlayer || camera.zoom > 0.6) && this.segments.length < 800) {
             const glowBlur = this.isBoosting ? 20 * camera.zoom : 8 * camera.zoom;
             ctx.shadowBlur = glowBlur;
             ctx.shadowColor = skinColors[0];
 
-            // Desenha linha de fundo para o glow
             ctx.beginPath();
             const headPos = camera.worldToScreen(this.segments[0].x, this.segments[0].y);
             ctx.moveTo(headPos.x, headPos.y);
-            let glowStep = Math.max(1, Math.floor(this.segments.length / 40));
+
+            // Simplificar linha do glow (menos pontos que os segmentos reais)
+            const glowStep = Math.max(1, Math.floor(this.segments.length / 30));
+
             for (let i = 1; i < this.segments.length; i += glowStep) {
                 const p = camera.worldToScreen(this.segments[i].x, this.segments[i].y);
                 ctx.lineTo(p.x, p.y);
             }
+
             ctx.strokeStyle = skinColors[0];
             ctx.lineWidth = growthSize * camera.zoom;
             ctx.globalAlpha = 0.4;
             ctx.stroke();
 
-            // Limpar shadow para desenhar segmentos
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
         }
 
-        // Renderizar Segmentos 3D
-        // const step = Math.max(1, Math.floor((growthSize * 0.5) / CONFIG.SNAKE_SEGMENT_SPACING)); (Usando o step otimizado acima)
+        // 3. Renderizar Segmentos (Usando cache)
+        const renderRadius = growthSize * 2 * camera.zoom; // Margem de culling
 
+        // Loop reverso (desenha cauda primeiro)
         for (let i = this.segments.length - 1; i >= 0; i -= step) {
             const segment = this.segments[i];
-            if (!camera.isVisible(segment.x, segment.y, growthSize * 2 * camera.zoom)) continue;
+
+            // Culling (só desenha se visível na tela)
+            if (!camera.isVisible(segment.x, segment.y, renderRadius)) continue;
 
             const screenPos = camera.worldToScreen(segment.x, segment.y);
-            const currentSize = growthSize * camera.zoom;
 
-            // Gradiente 3D com proteção
-            const grad = ctx.createRadialGradient(
-                screenPos.x - currentSize * 0.2, screenPos.y - currentSize * 0.2, currentSize * 0.1,
-                screenPos.x, screenPos.y, currentSize
-            );
-
-            // Escolha de cor segura
-            let c1 = skinColors[0];
-            let c2;
-
-            try {
-                c2 = skinColors[1] || Utils.darkenColor(c1, 40);
-            } catch (e) { c2 = c1; }
-
-            if (['stripes', 'rainbow', 'scales'].includes(skinPattern)) {
-                const idx = Math.floor(i / 8) % skinColors.length;
-                c1 = skinColors[idx];
-                try {
-                    c2 = Utils.darkenColor(c1, 40);
-                } catch (e) { c2 = c1; }
+            // Selecionar gradiente do cache
+            let gradIndex = 0;
+            if (isMultiColor) {
+                // Lógica de padrão simplificada para performance
+                // Usa o índice do segmento para ciclar as cores
+                gradIndex = Math.floor(i / 8) % gradientCache.length;
             }
 
-            grad.addColorStop(0, '#ffffff');
-            grad.addColorStop(0.3, c1);
-            grad.addColorStop(1, c2);
-
-            ctx.fillStyle = grad;
+            // Desenhar usando Translate + Gradiente Cacheado
+            ctx.translate(screenPos.x, screenPos.y);
+            ctx.fillStyle = gradientCache[gradIndex];
             ctx.beginPath();
-            ctx.arc(screenPos.x, screenPos.y, currentSize, 0, Math.PI * 2);
+            ctx.arc(0, 0, currentSize, 0, Math.PI * 2);
             ctx.fill();
+            ctx.translate(-screenPos.x, -screenPos.y); // Reset translate (mais rápido que save/restore)
         }
 
         ctx.restore();
